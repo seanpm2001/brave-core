@@ -49,6 +49,7 @@ class ContentsLayoutManager;
 class SidebarContainerView;
 class WalletButton;
 class VerticalTabStripWidgetDelegateView;
+class BraveHelpBubbleView;
 
 class BraveBrowserView : public BrowserView,
                          public commands::AcceleratorService::Observer {
@@ -98,6 +99,7 @@ class BraveBrowserView : public BrowserView,
   vertical_tab_strip_widget_delegate_view() {
     return vertical_tab_strip_widget_delegate_view_;
   }
+  void ShowBraveHelpBubbleView(const std::u16string text);
 
   // commands::AcceleratorService:
   void OnAcceleratorsChanged(const commands::Accelerators& changed) override;
@@ -150,6 +152,7 @@ class BraveBrowserView : public BrowserView,
   void UpdateSideBarHorizontalAlignment();
 
   bool closing_confirm_dialog_activated_ = false;
+  base::WeakPtr<BraveHelpBubbleView> brave_help_bubble_view_;
   raw_ptr<SidebarContainerView> sidebar_container_view_ = nullptr;
   raw_ptr<views::View> vertical_tab_strip_host_view_ = nullptr;
   raw_ptr<VerticalTabStripWidgetDelegateView>
