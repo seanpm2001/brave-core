@@ -31,7 +31,6 @@ url = "2.2"
 
 readability = { path = "src/readability" }
 lazy_static = "1.4"
-markup5ever = "0.10"
 
 [build-dependencies]
 regex = "1"
