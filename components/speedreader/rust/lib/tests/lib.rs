@@ -13,8 +13,8 @@ use url::Url;
 
 use distance::damerau_levenshtein;
 use html5ever::LocalName;
-use kuchiki::NodeData::{Element, Text};
-use kuchiki::NodeRef as Handle;
+use kuchikiki::NodeData::{Element, Text};
+use kuchikiki::NodeRef as Handle;
 use std::vec::Vec;
 
 static SAMPLES_PATH: &str = "data/tests-samples/";

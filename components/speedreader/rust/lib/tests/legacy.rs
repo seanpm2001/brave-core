@@ -19,9 +19,9 @@ use std::fs::File;
 use std::io::Read;
 use url::Url;
 
-use kuchiki::NodeData::{Element, Text};
-use kuchiki::NodeRef as Handle;
-use kuchiki::Sink;
+use kuchikiki::NodeData::{Element, Text};
+use kuchikiki::NodeRef as Handle;
+use kuchikiki::Sink;
 use regex::Regex;
 use std::vec::Vec;
 

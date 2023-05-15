@@ -1,7 +1,7 @@
 use crate::{dom, util};
-use kuchiki::iter::NodeIterator;
-use kuchiki::NodeRef as Handle;
-use kuchiki::{ElementData, Sink};
+use kuchikiki::iter::NodeIterator;
+use kuchikiki::NodeRef as Handle;
+use kuchikiki::{ElementData, Sink};
 use util::count_ignore_consecutive_whitespace;
 
 #[derive(Default)]

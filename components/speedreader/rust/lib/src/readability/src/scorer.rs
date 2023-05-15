@@ -3,12 +3,12 @@ use html5ever::tendril::StrTendril;
 use html5ever::tree_builder::TreeSink;
 use html5ever::tree_builder::{ElementFlags, NodeOrText};
 use html5ever::{LocalName, QualName};
-use kuchiki::iter::NodeIterator;
-use kuchiki::NodeData::{
+use kuchikiki::iter::NodeIterator;
+use kuchikiki::NodeData::{
     Comment, Doctype, Document, DocumentFragment, Element, ProcessingInstruction, Text,
 };
-use kuchiki::NodeRef as Handle;
-use kuchiki::{ElementData, Sink};
+use kuchikiki::NodeRef as Handle;
+use kuchikiki::{ElementData, Sink};
 use regex::Regex;
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
