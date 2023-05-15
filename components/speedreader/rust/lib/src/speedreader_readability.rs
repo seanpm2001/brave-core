@@ -81,7 +81,7 @@ impl<O: OutputSink> SpeedReaderProcessor for SpeedReaderReadability<O> {
                     Ok(())
                 } else {
                     Err(SpeedReaderError::RewritingError(
-                        format!("Not readable. Moz score: {}", features.moz_score).to_owned(),
+                        format!("Not readable. Moz score: {}", features.moz_score),
                     ))
                 }
             } else {
