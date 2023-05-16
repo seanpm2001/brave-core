@@ -7,6 +7,4 @@ extern crate url;
 pub mod speedreader;
 mod speedreader_readability;
 
-pub use self::speedreader::{
-    OutputSink, SpeedReader, SpeedReaderError, SpeedReaderProcessor,
-};
+pub use self::speedreader::{OutputSink, SpeedReader, SpeedReaderError, SpeedReaderProcessor};

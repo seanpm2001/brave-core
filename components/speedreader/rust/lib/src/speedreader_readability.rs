@@ -80,9 +80,10 @@ impl<O: OutputSink> SpeedReaderProcessor for SpeedReaderReadability<O> {
                     self.output_sink.handle_chunk(extracted.content.as_bytes());
                     Ok(())
                 } else {
-                    Err(SpeedReaderError::RewritingError(
-                        format!("Not readable. Moz score: {}", features.moz_score),
-                    ))
+                    Err(SpeedReaderError::RewritingError(format!(
+                        "Not readable. Moz score: {}",
+                        features.moz_score
+                    )))
                 }
             } else {
                 Err(SpeedReaderError::RewritingError("Could not score document".to_owned()))
@@ -104,7 +105,7 @@ impl<O: OutputSink> SpeedReaderReadability<O> {
                 theme: None,
                 font_family: None,
                 font_size: None,
-                content_style: None,                
+                content_style: None,
                 parser: Some(parser),
                 url,
                 output_sink,
