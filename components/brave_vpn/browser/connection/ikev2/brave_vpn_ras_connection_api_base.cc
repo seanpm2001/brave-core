@@ -28,39 +28,13 @@ BraveVPNOSConnectionAPIBase::BraveVPNOSConnectionAPIBase(
     scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory,
     PrefService* local_prefs,
     version_info::Channel channel)
-    : target_vpn_entry_name_(GetBraveVPNEntryName(channel)),
-      local_prefs_(local_prefs),
-      url_loader_factory_(url_loader_factory),
-      region_data_manager_(url_loader_factory_, local_prefs_) {
-  DCHECK(url_loader_factory_ && local_prefs_);
-
-  // Safe to use Unretained here because |region_data_manager_| is owned
-  // instance.
-  region_data_manager_.set_selected_region_changed_callback(base::BindRepeating(
-      &BraveVPNOSConnectionAPIBase::NotifySelectedRegionChanged,
-      base::Unretained(this)));
-  region_data_manager_.set_region_data_ready_callback(
-      base::BindRepeating(&BraveVPNOSConnectionAPIBase::NotifyRegionDataReady,
-                          base::Unretained(this)));
-  net::NetworkChangeNotifier::AddNetworkChangeObserver(this);
+    : BraveVPNOSConnectionAPI(url_loader_factory, local_prefs),
+      target_vpn_entry_name_(GetBraveVPNEntryName(channel)),
+      local_prefs_(local_prefs) {
+  DCHECK(local_prefs_);
 }
 
-BraveVPNOSConnectionAPIBase::~BraveVPNOSConnectionAPIBase() {
-  net::NetworkChangeNotifier::RemoveNetworkChangeObserver(this);
-}
-
-void BraveVPNOSConnectionAPIBase::AddObserver(Observer* observer) {
-  observers_.AddObserver(observer);
-}
-
-void BraveVPNOSConnectionAPIBase::RemoveObserver(Observer* observer) {
-  observers_.RemoveObserver(observer);
-}
-
-void BraveVPNOSConnectionAPIBase::SetConnectionState(
-    mojom::ConnectionState state) {
-  UpdateAndNotifyConnectionStateChange(state);
-}
+BraveVPNOSConnectionAPIBase::~BraveVPNOSConnectionAPIBase() = default;
 
 void BraveVPNOSConnectionAPIBase::ResetConnectionState() {
   // Don't use UpdateAndNotifyConnectionStateChange() to update connection state
@@ -74,10 +48,6 @@ void BraveVPNOSConnectionAPIBase::ResetConnectionState() {
 
 std::string BraveVPNOSConnectionAPIBase::GetLastConnectionError() const {
   return last_connection_error_;
-}
-
-BraveVPNRegionDataManager& BraveVPNOSConnectionAPIBase::GetRegionDataManager() {
-  return region_data_manager_;
 }
 
 void BraveVPNOSConnectionAPIBase::SetSelectedRegion(const std::string& name) {
@@ -298,14 +268,6 @@ void BraveVPNOSConnectionAPIBase::SetLastConnectionError(
   last_connection_error_ = error;
 }
 
-void BraveVPNOSConnectionAPIBase::OnNetworkChanged(
-    net::NetworkChangeNotifier::ConnectionType type) {
-  // It's rare but sometimes Brave doesn't get vpn status update from OS.
-  // Checking here will make vpn status update properly in that situation.
-  VLOG(2) << __func__ << " : " << type;
-  CheckConnection();
-}
-
 void BraveVPNOSConnectionAPIBase::UpdateAndNotifyConnectionStateChange(
     ConnectionState state) {
   // this is a simple state machine for handling connection state
@@ -352,19 +314,6 @@ bool BraveVPNOSConnectionAPIBase::QuickCancelIfPossible() {
   // Can do quick cancel in this situation by cancel that request.
   api_request_.reset();
   return true;
-}
-
-BraveVpnAPIRequest* BraveVPNOSConnectionAPIBase::GetAPIRequest() {
-  if (!url_loader_factory_) {
-    CHECK_IS_TEST();
-    return nullptr;
-  }
-
-  if (!api_request_) {
-    api_request_ = std::make_unique<BraveVpnAPIRequest>(url_loader_factory_);
-  }
-
-  return api_request_.get();
 }
 
 std::string BraveVPNOSConnectionAPIBase::GetCurrentEnvironment() const {
@@ -495,23 +444,6 @@ void BraveVPNOSConnectionAPIBase::OnGetProfileCredentials(
 const BraveVPNConnectionInfo& BraveVPNOSConnectionAPIBase::connection_info()
     const {
   return connection_info_;
-}
-
-mojom::ConnectionState BraveVPNOSConnectionAPIBase::GetConnectionState() const {
-  return connection_state_;
-}
-
-void BraveVPNOSConnectionAPIBase::NotifyRegionDataReady(bool ready) const {
-  for (auto& obs : observers_) {
-    obs.OnRegionDataReady(ready);
-  }
-}
-
-void BraveVPNOSConnectionAPIBase::NotifySelectedRegionChanged(
-    const std::string& name) const {
-  for (auto& obs : observers_) {
-    obs.OnSelectedRegionChanged(name);
-  }
 }
 
 }  // namespace brave_vpn
