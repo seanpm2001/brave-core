@@ -59,3 +59,11 @@ source_set("common") {
     "//url",
   ]
 }
+
+group("unit_tests") {
+  testonly = true
+  deps = [
+    "ikev2:unit_tests",
+    "wireguard:unit_tests",
+  ]
+}
