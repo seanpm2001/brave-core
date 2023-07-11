@@ -14,7 +14,7 @@
 #include "brave/browser/metrics/metrics_reporting_util.h"
 #include "brave/browser/misc_metrics/process_misc_metrics.h"
 #include "brave/browser/ntp_background/ntp_p3a_helper_impl.h"
-#include "brave/browser/onboarding/pref_names.h"
+#include "brave/browser/onboarding/onboarding_tab_helper.h"
 #include "brave/browser/playlist/playlist_service_factory.h"
 #include "brave/browser/themes/brave_dark_mode_utils.h"
 #include "brave/components/brave_ads/browser/ads_service.h"
@@ -140,8 +140,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
   misc_metrics::ProcessMiscMetrics::RegisterPrefs(registry);
   misc_metrics::PageMetricsService::RegisterPrefs(registry);
   brave_ads::BraveStatsHelper::RegisterLocalStatePrefs(registry);
-  registry->RegisterBooleanPref(
-      onboarding::prefs::kOnboardingIsShieldsHighlighted, false);
+  onboarding::RegisterLocalStatePrefs(registry);
   misc_metrics::GeneralBrowserUsage::RegisterPrefs(registry);
 
   playlist::PlaylistServiceFactory::RegisterLocalStatePrefs(registry);
