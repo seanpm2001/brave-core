@@ -402,6 +402,8 @@ static_library("engine") {
     "gemini/gemini.h",
     "gemini/gemini_util.cc",
     "gemini/gemini_util.h",
+    "initialization_manager.cc",
+    "initialization_manager.h",
     "legacy/bat_helper.cc",
     "legacy/bat_helper.h",
     "legacy/bat_state.cc",

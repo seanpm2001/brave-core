@@ -21,6 +21,7 @@
 #include "brave/components/brave_rewards/core/gemini/gemini.h"
 #include "brave/components/brave_rewards/core/gemini/gemini_util.h"
 #include "brave/components/brave_rewards/core/global_constants.h"
+#include "brave/components/brave_rewards/core/initialization_manager.h"
 #include "brave/components/brave_rewards/core/logging/event_log_keys.h"
 #include "brave/components/brave_rewards/core/notifications/notification_keys.h"
 #include "brave/components/brave_rewards/core/rewards_engine_impl.h"
@@ -403,7 +404,7 @@ bool LogOutWallet(RewardsEngineImpl& engine,
   engine.database()->SaveEventLog(log::kWalletDisconnected,
                                   wallet_type + abbreviated_address);
 
-  if (!engine.IsShuttingDown()) {
+  if (!engine.GetHelper<InitializationManager>().IsShuttingDown()) {
     engine.client()->ExternalWalletLoggedOut();
     engine.client()->ShowNotification(notification.empty()
                                           ? notifications::kWalletDisconnected
