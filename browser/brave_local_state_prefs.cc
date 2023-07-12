@@ -14,7 +14,6 @@
 #include "brave/browser/metrics/metrics_reporting_util.h"
 #include "brave/browser/misc_metrics/process_misc_metrics.h"
 #include "brave/browser/ntp_background/ntp_p3a_helper_impl.h"
-#include "brave/browser/onboarding/onboarding_tab_helper.h"
 #include "brave/browser/playlist/playlist_service_factory.h"
 #include "brave/browser/themes/brave_dark_mode_utils.h"
 #include "brave/components/brave_ads/browser/ads_service.h"
@@ -47,6 +46,7 @@
 #include "brave/browser/ui/webui/new_tab_page/brave_new_tab_message_handler.h"
 
 #if !BUILDFLAG(IS_ANDROID)
+#include "brave/browser/onboarding/onboarding_tab_helper.h"
 #include "brave/browser/p3a/p3a_core_metrics.h"
 #include "brave/browser/ui/whats_new/whats_new_util.h"
 #include "chrome/browser/first_run/first_run.h"
@@ -110,6 +110,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
   BraveUptimeTracker::RegisterPrefs(registry);
   dark_mode::RegisterBraveDarkModeLocalStatePrefs(registry);
   whats_new::RegisterLocalStatePrefs(registry);
+  onboarding::RegisterLocalStatePrefs(registry);
 #endif
 
 #if BUILDFLAG(ENABLE_CRASH_DIALOG)
@@ -140,7 +141,6 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
   misc_metrics::ProcessMiscMetrics::RegisterPrefs(registry);
   misc_metrics::PageMetricsService::RegisterPrefs(registry);
   brave_ads::BraveStatsHelper::RegisterLocalStatePrefs(registry);
-  onboarding::RegisterLocalStatePrefs(registry);
   misc_metrics::GeneralBrowserUsage::RegisterPrefs(registry);
 
   playlist::PlaylistServiceFactory::RegisterLocalStatePrefs(registry);
