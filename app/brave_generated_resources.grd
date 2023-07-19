@@ -700,6 +700,19 @@ Or change later at <ph name="SETTINGS_EXTENIONS_LINK">$2<ex>brave://settings/ext
         Brave Tooltip
       </message>
 
+      <!-- In product help bubble dialog for settings page deep links -->
+      <message name="IDS_SETTINGS_VERTICAL_TABS_IPH_BUBBLE_TEXT" desc="The text on an In-Product-Help bubble that is shown when a user navigates to the tabs settings page from brave.com">
+        Try vertical tabs
+      </message>
+      <message name="IDS_SETTINGS_VERTICAL_TABS_IPH_BUBBLE_CLOSE_BUTTON_ARIA_LABEL_TEXT" desc="The accessibility label associated with the In-Product-Help bubble's close button">
+        Close tip
+      </message>
+
+      <!-- Brave VPN Tutorial -->
+      <message name="IDS_TUTORIAL_BRAVE_VPN_OPEN_PANEL" desc="">
+        Click to start using Brave VPN
+      </message>
+
       <!-- Sidebar -->
       <if expr="toolkit_views">
         <if expr="not use_titlecase">

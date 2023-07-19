@@ -34,6 +34,14 @@ class BraveSettingsUI : public settings::SettingsUI {
 
   void BindInterface(
       mojo::PendingReceiver<commands::mojom::CommandsService> pending_receiver);
+
+ private:
+  void CreateHelpBubbleHandler(
+      mojo::PendingRemote<help_bubble::mojom::HelpBubbleClient> client,
+      mojo::PendingReceiver<help_bubble::mojom::HelpBubbleHandler> handler)
+      override;
+
+  std::unique_ptr<user_education::HelpBubbleHandler> help_bubble_handler_;
 };
 
 #endif  // BRAVE_BROWSER_UI_WEBUI_BRAVE_SETTINGS_UI_H_

@@ -7,6 +7,7 @@ import '../settings_shared.css.js'
 import '../settings_vars.css.js'
 
 import {PrefsMixin, PrefsMixinInterface} from 'chrome://resources/cr_components/settings_prefs/prefs_mixin.js';
+import {HelpBubbleMixin, HelpBubbleMixinInterface} from 'chrome://resources/cr_components/help_bubble/help_bubble_mixin.js';
 import {I18nMixin, I18nMixinInterface} from 'chrome://resources/cr_elements/i18n_mixin.js'
 import {PolymerElement} from 'chrome://resources/polymer/v3_0/polymer/polymer_bundled.min.js'
 
@@ -14,8 +15,8 @@ import {loadTimeData} from '../i18n_setup.js'
 
 import {getTemplate} from './tabs.html.js'
 
-const SettingsBraveAppearanceTabsElementBase = PrefsMixin(I18nMixin(PolymerElement)) as {
-  new (): PolymerElement & I18nMixinInterface & PrefsMixinInterface
+const SettingsBraveAppearanceTabsElementBase = HelpBubbleMixin(PrefsMixin(I18nMixin(PolymerElement))) as {
+  new (): PolymerElement & I18nMixinInterface & PrefsMixinInterface & HelpBubbleMixinInterface
 }
 
 export class SettingsBraveAppearanceTabsElement extends SettingsBraveAppearanceTabsElementBase {
@@ -39,6 +40,17 @@ export class SettingsBraveAppearanceTabsElement extends SettingsBraveAppearanceT
     },
     { value: 0, name: this.i18n('appearanceSettingsTabHoverModeTooltip') }
   ]
+
+  override ready () {
+    super.ready()
+
+    window.addEventListener('load', () => {
+      const anchor = this.shadowRoot!.querySelector('#verticalTabsSetting')!
+      this.registerHelpBubble('kVerticalTabsSettingElementId', anchor, {
+        anchorPaddingTop: 10
+      });
+    })
+  }
 
 }
 

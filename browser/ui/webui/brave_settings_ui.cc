@@ -17,6 +17,7 @@
 #include "brave/browser/resources/settings/grit/brave_settings_resources_map.h"
 #include "brave/browser/resources/settings/shortcuts_page/grit/commands_generated_map.h"
 #include "brave/browser/shell_integrations/buildflags/buildflags.h"
+#include "brave/browser/ui/browser_element_identifiers.h"
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/browser/ui/webui/navigation_bar_data_provider.h"
@@ -218,4 +219,12 @@ void BraveSettingsUI::BindInterface(
   commands::AcceleratorServiceFactory::GetForContext(
       web_ui()->GetWebContents()->GetBrowserContext())
       ->BindInterface(std::move(pending_receiver));
+}
+
+void BraveSettingsUI::CreateHelpBubbleHandler(
+    mojo::PendingRemote<help_bubble::mojom::HelpBubbleClient> client,
+    mojo::PendingReceiver<help_bubble::mojom::HelpBubbleHandler> handler) {
+  help_bubble_handler_ = std::make_unique<user_education::HelpBubbleHandler>(
+      std::move(handler), std::move(client), this,
+      std::vector<ui::ElementIdentifier>{kVerticalTabsSettingElementId});
 }

@@ -15,6 +15,7 @@
   <!-- Vertical Tab strip -->
   <template is="dom-if" if="[[isVerticalTabStripFeatureEnabled()]]">
     <settings-toggle-button
+      id="verticalTabsSetting"
       class="cr-row list-item"
       pref="{{prefs.brave.tabs.vertical_tabs_enabled}}"
       label="$i18n{appearanceSettingsTabsUseVerticalTabs}">

@@ -221,6 +221,13 @@ declare namespace chrome.greaselion {
   const isGreaselionExtension: (id: string, callback: (valid: boolean) => void) => {}
 }
 
+declare namespace chrome.braveEducation {
+  function openSettings (url: string): void
+  function openVerticalTabsSettings (): void
+  function enableVerticalTabs (): void
+  function startVpnTutorial (): void
+}
+
 declare namespace chrome.braveNews {
   const onClearHistory: {
     addListener: (callback: () => any) => void

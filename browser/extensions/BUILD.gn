@@ -17,6 +17,8 @@ source_set("extensions") {
   # Remove when https://github.com/brave/brave-browser/issues/10661 is resolved
   check_includes = false
   sources = [
+    "api/brave_education_api.cc",
+    "api/brave_education_api.h",
     "api/brave_extensions_api_client.cc",
     "api/brave_extensions_api_client.h",
     "api/brave_rewards_api.cc",

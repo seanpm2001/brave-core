@@ -12,6 +12,7 @@
 #include "brave/app/brave_command_ids.h"
 #include "brave/app/vector_icons/vector_icons.h"
 #include "brave/browser/brave_vpn/brave_vpn_service_factory.h"
+#include "brave/browser/ui/browser_element_identifiers.h"
 #include "brave/browser/ui/color/brave_color_id.h"
 #include "brave/components/brave_vpn/browser/brave_vpn_service.h"
 #include "brave/components/l10n/common/localization_util.h"
@@ -38,6 +39,7 @@
 #include "ui/views/background.h"
 #include "ui/views/border.h"
 #include "ui/views/controls/highlight_path_generator.h"
+#include "ui/views/view_class_properties.h"
 
 using ConnectionState = brave_vpn::mojom::ConnectionState;
 using PurchasedState = brave_vpn::mojom::PurchasedState;
@@ -194,6 +196,8 @@ BraveVPNButton::BraveVPNButton(Browser* browser)
 
   constexpr int kBraveAvatarImageLabelSpacing = 4;
   SetImageLabelSpacing(kBraveAvatarImageLabelSpacing);
+
+  SetProperty(views::kElementIdentifierKey, kBraveVPNButtonElementId);
 }
 
 BraveVPNButton::~BraveVPNButton() = default;

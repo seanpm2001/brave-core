@@ -1,0 +1,41 @@
+[
+  {
+    "namespace": "braveEducation",
+    "description": "Provides functions to help users learn about Brave features",
+    "compiler_options": {
+      "implemented_in": "brave/browser/extensions/api/brave_education_api.h"
+    },
+    "functions": [
+      {
+        "name": "openSettings",
+        "type": "function",
+        "description": "Opens the Brave settings page using the specified URL",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "description": "The settings URL to open"
+          }
+        ]
+      },
+      {
+        "name": "openVerticalTabsSettings",
+        "type": "function",
+        "description": "Opens the Brave settings page and highlights the vertical tabs setting with IPH",
+        "parameters": []
+      },
+      {
+        "name": "enableVerticalTabs",
+        "type": "function",
+        "description": "Enables the vertical tabs feature",
+        "parameters": []
+      },
+      {
+        "name": "startVpnTutorial",
+        "type": "function",
+        "description": "Starts the Brave VPN tutorial",
+        "parameters": []
+      }
+    ]
+  }
+]
