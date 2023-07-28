@@ -21,6 +21,7 @@ class VerticalTabMetrics;
 #else
 class PrivacyHubMetrics;
 #endif
+class DohMetrics;
 
 class ProcessMiscMetrics {
  public:
@@ -46,6 +47,7 @@ class ProcessMiscMetrics {
 #else
   std::unique_ptr<PrivacyHubMetrics> privacy_hub_metrics_;
 #endif
+  std::unique_ptr<DohMetrics> doh_metrics_;
 };
 
 }  // namespace misc_metrics

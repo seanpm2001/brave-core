@@ -16,6 +16,9 @@ extern const char kMiscMetricsPrivacyHubViews[];
 extern const char kMiscMetricsOpenTabsStorage[];
 extern const char kMiscMetricsGroupTabsStorage[];
 extern const char kMiscMetricsPinnedTabsStorage[];
+
+extern const char kMiscMetricsTotalDnsRequestStorage[];
+extern const char kMiscMetricsUpgradedDnsRequestStorage[];
 }  // namespace misc_metrics
 
 #endif  // BRAVE_COMPONENTS_MISC_METRICS_PREF_NAMES_H_

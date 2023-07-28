@@ -22,4 +22,8 @@ const char kMiscMetricsGroupTabsStorage[] =
     "brave.misc_metrics.group_tabs_storage";
 const char kMiscMetricsPinnedTabsStorage[] =
     "brave.misc_metrics.pinned_tabs_storage";
+const char kMiscMetricsTotalDnsRequestStorage[] =
+    "brave.misc_metrics.total_dns_requests";
+const char kMiscMetricsUpgradedDnsRequestStorage[] =
+    "brave.misc_metrics.upgraded_dns_requests";
 }  // namespace misc_metrics

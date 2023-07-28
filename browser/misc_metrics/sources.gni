@@ -4,6 +4,8 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.
 
 brave_browser_misc_metrics_sources = [
+  "//brave/browser/misc_metrics/doh_metrics.cc",
+  "//brave/browser/misc_metrics/doh_metrics.h",
   "//brave/browser/misc_metrics/page_metrics_service_factory.cc",
   "//brave/browser/misc_metrics/page_metrics_service_factory.h",
   "//brave/browser/misc_metrics/page_metrics_tab_helper.cc",

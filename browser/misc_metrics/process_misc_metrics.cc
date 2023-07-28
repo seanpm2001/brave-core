@@ -8,6 +8,7 @@
 #include "components/prefs/pref_registry_simple.h"
 #include "components/prefs/pref_service.h"
 
+#include "brave/browser/misc_metrics/doh_metrics.h"
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/misc_metrics/vertical_tab_metrics.h"
 #include "brave/components/misc_metrics/menu_metrics.h"
@@ -25,6 +26,7 @@ ProcessMiscMetrics::ProcessMiscMetrics(PrefService* local_state) {
   privacy_hub_metrics_ =
       std::make_unique<misc_metrics::PrivacyHubMetrics>(local_state);
 #endif
+  doh_metrics_ = std::make_unique<misc_metrics::DohMetrics>(local_state);
 }
 
 ProcessMiscMetrics::~ProcessMiscMetrics() = default;
@@ -50,6 +52,7 @@ void ProcessMiscMetrics::RegisterPrefs(PrefRegistrySimple* registry) {
 #else
   PrivacyHubMetrics::RegisterPrefs(registry);
 #endif
+  DohMetrics::RegisterPrefs(registry);
 }
 
 }  // namespace misc_metrics
