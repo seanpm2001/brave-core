@@ -44,10 +44,10 @@ class RewardsLogStream {
   std::ostringstream stream_;
 };
 
-class RewardsEngineHelper : public base::SupportsUserData::Data {
+class RewardsEngineHelper {
  protected:
   explicit RewardsEngineHelper(RewardsEngineContext& context);
-  ~RewardsEngineHelper() override;
+  virtual ~RewardsEngineHelper();
 
   RewardsEngineHelper(const RewardsEngineHelper&) = delete;
   RewardsEngineHelper& operator=(const RewardsEngineHelper&) = delete;

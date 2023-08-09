@@ -11,19 +11,9 @@ namespace brave_rewards::internal {
 
 RewardsEngineContext::RewardsEngineContext(RewardsEngineImpl& engine_impl)
     : engine_impl_(engine_impl) {
-  AddHelpers();
+  helpers_ = {CreateHelper<InitializationManager>()};
 }
 
-RewardsEngineContext::~RewardsEngineContext() {
-  // Remove helpers in the reverse order in which they were added.
-  for (auto iter = helper_keys_.rbegin(); iter != helper_keys_.rend(); ++iter) {
-    RemoveUserData(*iter);
-  }
-}
-
-void RewardsEngineContext::AddHelpers() {
-  // Add all helpers here. They will be destroyed in the reverse creation order.
-  AddHelper<InitializationManager>();
-}
+RewardsEngineContext::~RewardsEngineContext() = default;
 
 }  // namespace brave_rewards::internal

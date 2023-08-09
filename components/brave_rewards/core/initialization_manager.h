@@ -32,8 +32,6 @@ class InitializationManager : public RewardsEngineHelper {
  private:
   friend class RewardsEngineContext;
 
-  inline static const char kUserDataKey[] = "initialization-manager";
-
   explicit InitializationManager(RewardsEngineContext& context);
 
   void OnDatabaseInitialized(InitializeCallback callback, mojom::Result result);

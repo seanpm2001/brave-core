@@ -7,20 +7,20 @@
 #define BRAVE_COMPONENTS_BRAVE_REWARDS_CORE_REWARDS_ENGINE_CONTEXT_H_
 
 #include <memory>
+#include <tuple>
 #include <utility>
-#include <vector>
 
 #include "base/memory/raw_ref.h"
-#include "base/supports_user_data.h"
 
 namespace brave_rewards::internal {
 
 class RewardsEngineImpl;
+class InitializationManager;
 
-class RewardsEngineContext : private base::SupportsUserData {
+class RewardsEngineContext {
  public:
   explicit RewardsEngineContext(RewardsEngineImpl& engine_impl);
-  ~RewardsEngineContext() override;
+  virtual ~RewardsEngineContext();
 
   RewardsEngineContext(const RewardsEngineContext&) = delete;
   RewardsEngineContext& operator=(const RewardsEngineContext&) = delete;
@@ -29,29 +29,19 @@ class RewardsEngineContext : private base::SupportsUserData {
 
   template <typename T>
   T& GetHelper() const {
-    const void* key = &T::kUserDataKey;
-    T* helper = static_cast<T*>(GetUserData(key));
-    CHECK(helper) << "Rewards engine helper " << T::kUserDataKey
-                  << " has not been created";
-
+    auto& helper = std::get<std::unique_ptr<T>>(helpers_);
+    CHECK(helper) << "Rewards engine helper has not been created";
     return *helper;
   }
 
  private:
-  void AddHelpers();
-
   template <typename T, typename... Args>
-  void AddHelper(Args&&... args) {
-    DCHECK(!GetUserData(&T::kUserDataKey))
-        << "Rewards engine helper " << T::kUserDataKey
-        << " has already been created";
-    T* helper = new T(*this, std::forward<Args>(args)...);
-    SetUserData(&T::kUserDataKey, std::unique_ptr<T>(helper));
-    helper_keys_.push_back(helper);
+  auto CreateHelper(Args&&... args) {
+    return std::unique_ptr<T>(new T(*this, std::forward<Args>(args)...));
   }
 
   const raw_ref<RewardsEngineImpl> engine_impl_;
-  std::vector<const void*> helper_keys_;
+  std::tuple<std::unique_ptr<InitializationManager>> helpers_;
 };
 
 }  // namespace brave_rewards::internal
