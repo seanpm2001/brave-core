@@ -512,6 +512,12 @@ This file contains all "about" strings.  It is set to NOT be translated, in tran
       <message name="IDS_FILTER_LISTS_TITLE" desc="Title for Filter Lists settings.">
         Filter Lists
       </message>
+      <message name="IDS_DEFAULT_FILTER_LISTS" desc="Title for Default filter lists.">
+        Default filter lists
+      </message>
+      <message name="IDS_DEFAULT_FILTER_LISTS_SUMMARY" desc="Summary text for Default filter lists.">
+        Additional popular community lists. Note that enabling too many filters will degrade browsing speeds.
+      </message>
       <message name="IDS_CUSTOM_FILTER_LISTS" desc="Title for Custom filter lists.">
         Custom filter lists
       </message>

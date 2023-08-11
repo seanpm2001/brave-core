@@ -54,6 +54,12 @@ void FilterListService::EnableFilter(const std::string& filterListUuid,
       filterListUuid, shouldEnableFilter);
 }
 
+void FilterListService::GetDefaultFilterLists(
+    GetDefaultFilterListsCallback callback) {
+  std::move(callback).Run(
+      ad_block_service_->regional_service_manager()->GetRegionalLists());
+}
+
 void FilterListService::GetSubscriptions(GetSubscriptionsCallback callback) {
   std::vector<mojom::SubscriptionInfoPtr> items;
   std::vector<SubscriptionInfo> subscriptions_ =
