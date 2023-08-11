@@ -1,26 +1,28 @@
 diff --git a/ios/chrome/browser/shared/model/prefs/browser_prefs.mm b/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
-index 1fa0cd98c343546757fbbf08468e43eb786c250f..38744f944c6b95e1cb5fd04ef9e42724f20cea61 100644
+index d292712550acef255561a07975f758ccec574688..9ce267eead09db57f71701f0bfe86e1eb0e6fa05 100644
 --- a/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
 +++ b/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
-@@ -299,6 +299,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
-       prefs::kIosSafetyCheckManagerSafeBrowsingCheckResult,
-       NameForSafetyCheckState(SafeBrowsingSafetyCheckState::kDefault),
+@@ -303,6 +303,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
        PrefRegistry::LOSSY_PREF);
+   registry->RegisterTimePref(prefs::kIosSafetyCheckManagerLastRunTime,
+                              base::Time(), PrefRegistry::LOSSY_PREF);
 +  BRAVE_REGISTER_LOCAL_STATE_PREFS
  }
  
  void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
-@@ -479,6 +480,7 @@ void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
-   // Register pref used to detect addresses in web page
-   registry->RegisterBooleanPref(prefs::kDetectAddressesEnabled, true);
-   registry->RegisterBooleanPref(prefs::kDetectAddressesAccepted, false);
+@@ -490,6 +491,7 @@ void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
+ 
+   registry->RegisterBooleanPref(prefs::kIosParcelTrackingOptInPromptDisplayed,
+                                 false);
 +  BRAVE_REGISTER_BROWSER_STATE_PREFS
  }
  
  // This method should be periodically pruned of year+ old migrations.
-@@ -567,4 +569,5 @@ void MigrateObsoleteBrowserStatePrefs(PrefService* prefs) {
+@@ -578,6 +580,7 @@ void MigrateObsoleteBrowserStatePrefs(PrefService* prefs) {
    invalidation::InvalidatorRegistrarWithMemory::ClearDeprecatedPrefs(prefs);
    invalidation::PerUserTopicSubscriptionManager::ClearDeprecatedPrefs(prefs);
    invalidation::FCMInvalidationService::ClearDeprecatedPrefs(prefs);
 +  BRAVE_MIGRATE_OBSOLETE_BROWSER_STATE_PREFS
  }
+ 
+ void MigrateObsoleteUserDefault(void) {
