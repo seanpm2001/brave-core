@@ -27,7 +27,7 @@ void InitializationManager::Initialize(InitializeCallback callback) {
 
   state_ = State::kInitializing;
 
-  context().GetEngineImpl().database()->Initialize(ToLegacyCallback(
+  GetEngineImpl().database()->Initialize(ToLegacyCallback(
       base::BindOnce(&InitializationManager::OnDatabaseInitialized,
                      weak_factory_.GetWeakPtr(), std::move(callback))));
 }
@@ -44,10 +44,9 @@ void InitializationManager::Shutdown(ShutdownCallback callback) {
 
   client().ClearAllNotifications();
 
-  context().GetEngineImpl().database()->FinishAllInProgressContributions(
-      ToLegacyCallback(
-          base::BindOnce(&InitializationManager::OnContributionsFinished,
-                         weak_factory_.GetWeakPtr(), std::move(callback))));
+  GetEngineImpl().database()->FinishAllInProgressContributions(ToLegacyCallback(
+      base::BindOnce(&InitializationManager::OnContributionsFinished,
+                     weak_factory_.GetWeakPtr(), std::move(callback))));
 }
 
 void InitializationManager::OnDatabaseInitialized(InitializeCallback callback,
@@ -60,7 +59,7 @@ void InitializationManager::OnDatabaseInitialized(InitializeCallback callback,
     return;
   }
 
-  context().GetEngineImpl().state()->Initialize(
+  GetEngineImpl().state()->Initialize(
       base::BindOnce(&InitializationManager::OnStateInitialized,
                      weak_factory_.GetWeakPtr(), std::move(callback)));
 }
@@ -83,7 +82,7 @@ void InitializationManager::OnStateInitialized(InitializeCallback callback,
 }
 
 void InitializationManager::InitializeHelpers() {
-  auto& engine = context().GetEngineImpl();
+  auto& engine = GetEngineImpl();
   engine.publisher()->SetPublisherServerListTimer();
   engine.contribution()->SetAutoContributeTimer();
   engine.contribution()->SetMonthlyContributionTimer();
@@ -100,9 +99,9 @@ void InitializationManager::OnContributionsFinished(ShutdownCallback callback,
     LogError(FROM_HERE) << "Error finalizing contributions";
   }
 
-  context().GetEngineImpl().database()->Close(
+  GetEngineImpl().database()->Close(
       base::BindOnce(&InitializationManager::OnDatabaseClosed,
-                     weak_factory_.GetWeakPtr(), std::move(callback)));
+                     weak_factory_.GetWeakPtr(), std::move(callback));
 }
 
 void InitializationManager::OnDatabaseClosed(ShutdownCallback callback,

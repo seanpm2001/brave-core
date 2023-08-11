@@ -51,8 +51,7 @@ inline constexpr uint64_t kPublisherListRefreshInterval =
     3 * base::Time::kHoursPerDay * base::Time::kSecondsPerHour;
 #endif
 
-class RewardsEngineImpl : public RewardsEngineContext,
-                          public mojom::RewardsEngine {
+class RewardsEngineImpl : public mojom::RewardsEngine {
  public:
   explicit RewardsEngineImpl(
       mojo::PendingAssociatedRemote<mojom::RewardsEngineClient> client_remote);
@@ -62,6 +61,9 @@ class RewardsEngineImpl : public RewardsEngineContext,
   RewardsEngineImpl(const RewardsEngineImpl&) = delete;
 
   RewardsEngineImpl& operator=(const RewardsEngineImpl&) = delete;
+
+  RewardsEngineContext& context() { return context_; }
+  const RewardsEngineContext& context() const { return context_; }
 
   // mojom::RewardsEngine implementation begin (in the order of appearance in
   // Mojom)
@@ -386,6 +388,7 @@ class RewardsEngineImpl : public RewardsEngineContext,
   template <typename T>
   void WhenReady(T callback);
 
+  RewardsEngineContext context_{*this};
   mojo::AssociatedRemote<mojom::RewardsEngineClient> client_;
 
   promotion::Promotion promotion_;

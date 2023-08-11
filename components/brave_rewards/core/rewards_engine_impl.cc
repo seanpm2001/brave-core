@@ -22,8 +22,7 @@ namespace brave_rewards::internal {
 
 RewardsEngineImpl::RewardsEngineImpl(
     mojo::PendingAssociatedRemote<mojom::RewardsEngineClient> client_remote)
-    : RewardsEngineContext(*this),
-      client_(std::move(client_remote)),
+    : client_(std::move(client_remote)),
       promotion_(*this),
       publisher_(*this),
       media_(*this),
@@ -49,7 +48,7 @@ RewardsEngineImpl::~RewardsEngineImpl() {
 // mojom::RewardsEngine implementation begin (in the order of appearance in
 // Mojom)
 void RewardsEngineImpl::Initialize(InitializeCallback callback) {
-  GetHelper<InitializationManager>().Initialize(
+  context().Get<InitializationManager>().Initialize(
       base::BindOnce(&RewardsEngineImpl::OnInitializationComplete,
                      weak_factory_.GetWeakPtr(), std::move(callback)));
 }
@@ -677,7 +676,7 @@ void RewardsEngineImpl::GetAllPromotions(GetAllPromotionsCallback callback) {
 }
 
 void RewardsEngineImpl::Shutdown(ShutdownCallback callback) {
-  GetHelper<InitializationManager>().Shutdown(
+  context().Get<InitializationManager>().Shutdown(
       base::BindOnce(&RewardsEngineImpl::OnShutdownComplete,
                      weak_factory_.GetWeakPtr(), std::move(callback)));
 }
@@ -754,11 +753,11 @@ database::Database* RewardsEngineImpl::database() {
 }
 
 bool RewardsEngineImpl::IsReady() const {
-  return GetHelper<InitializationManager>().IsReady();
+  return context().Get<InitializationManager>().IsReady();
 }
 
 bool RewardsEngineImpl::IsShuttingDown() const {
-  return GetHelper<InitializationManager>().IsShuttingDown();
+  return context().Get<InitializationManager>().IsShuttingDown();
 }
 
 void RewardsEngineImpl::OnInitializationComplete(InitializeCallback callback,
@@ -774,7 +773,7 @@ void RewardsEngineImpl::OnShutdownComplete(ShutdownCallback callback,
 
 template <typename T>
 void RewardsEngineImpl::WhenReady(T callback) {
-  switch (GetHelper<InitializationManager>().state()) {
+  switch (context().Get<InitializationManager>().state()) {
     case InitializationManager::State::kReady:
       callback();
       break;

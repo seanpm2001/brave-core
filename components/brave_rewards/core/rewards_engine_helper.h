@@ -57,13 +57,10 @@ class RewardsEngineHelper {
 
   mojom::RewardsEngineClient& client() const;
 
+  RewardsEngineImpl& GetEngineImpl() const { return context_->GetEngineImpl(); }
+
   RewardsLogStream Log(base::Location location);
   RewardsLogStream LogError(base::Location location);
-
-  template <typename T>
-  T& GetHelper() {
-    return context().GetHelper<T>();
-  }
 
  private:
   const raw_ref<RewardsEngineContext> context_;

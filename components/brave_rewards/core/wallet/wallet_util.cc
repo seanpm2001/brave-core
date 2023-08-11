@@ -404,7 +404,7 @@ bool LogOutWallet(RewardsEngineImpl& engine,
   engine.database()->SaveEventLog(log::kWalletDisconnected,
                                   wallet_type + abbreviated_address);
 
-  if (!engine.GetHelper<InitializationManager>().IsShuttingDown()) {
+  if (!engine.context().Get<InitializationManager>().IsShuttingDown()) {
     engine.client()->ExternalWalletLoggedOut();
     engine.client()->ShowNotification(notification.empty()
                                           ? notifications::kWalletDisconnected

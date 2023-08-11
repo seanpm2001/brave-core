@@ -28,7 +28,7 @@ class RewardsEngineContext {
   RewardsEngineImpl& GetEngineImpl() const { return engine_impl_.get(); }
 
   template <typename T>
-  T& GetHelper() const {
+  T& Get() const {
     auto& helper = std::get<std::unique_ptr<T>>(helpers_);
     CHECK(helper) << "Rewards engine helper has not been created";
     return *helper;
