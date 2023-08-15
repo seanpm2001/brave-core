@@ -72,7 +72,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final String PREF_OTHER_PRIVACY_SETTINGS_SECTION =
             "other_privacy_settings_section";
 
-    private static final String PREF_HTTPSE = "httpse";
     private static final String PREF_DE_AMP = "de_amp";
     private static final String PREF_DEBOUNCE = "debounce";
     private static final String PREF_IPFS_GATEWAY = "ipfs_gateway";
@@ -118,7 +117,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final String[] NEW_PRIVACY_PREFERENCE_ORDER = {
             PREF_BRAVE_SHIELDS_GLOBALS_SECTION, //  shields globals  section
             PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_DEBOUNCE,
-            PREF_HTTPS_UPGRADE, PREF_HTTPSE, PREF_HTTPS_FIRST_MODE, PREF_BLOCK_SCRIPTS,
+            PREF_HTTPS_UPGRADE, PREF_HTTPS_FIRST_MODE, PREF_BLOCK_SCRIPTS,
             PREF_BLOCK_CROSS_SITE_COOKIES, PREF_FINGERPRINTING_PROTECTION,
             PREF_FINGERPRINT_LANGUAGE, PREF_CONTENT_FILTERING, PREF_FORGET_FIRST_PARTY_STORAGE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section
@@ -153,7 +152,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private BraveDialogPreference mBlockCrosssiteCookies;
     private ChromeSwitchPreference mShowAutocompleteInAddressBar;
     private ChromeSwitchPreference mAutocompleteTopSites;
-    private ChromeSwitchPreference mHttpsePref;
     private ChromeSwitchPreference mDeAmpPref;
     private ChromeSwitchPreference mDebouncePref;
     private ChromeSwitchPreference mHttpsFirstModePref;
@@ -173,7 +171,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private ChromeSwitchPreference mHideYoutubeDistractingElementsPref;
     private PreferenceCategory mSocialBlockingCategory;
     private ChromeSwitchPreference mSocialBlockingGoogle;
-    private ChromeSwitchPreference mHttpsEverywhere;
     private ChromeSwitchPreference mSocialBlockingFacebook;
     private ChromeSwitchPreference mSocialBlockingTwitter;
     private ChromeSwitchPreference mSocialBlockingLinkedin;
@@ -235,9 +232,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         initCookieListOptInPageAndroidHandler();
         initFilterListAndroidHandler();
 
-        mHttpsePref = (ChromeSwitchPreference) findPreference(PREF_HTTPSE);
-        mHttpsePref.setOnPreferenceChangeListener(this);
-
         mDeAmpPref = (ChromeSwitchPreference) findPreference(PREF_DE_AMP);
         mDeAmpPref.setOnPreferenceChangeListener(this);
 
@@ -255,8 +249,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
 
         boolean httpsByDefaultIsEnabled =
                 ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT);
-        mHttpsePref.setVisible(!httpsByDefaultIsEnabled);
-        mHttpsFirstModePref.setVisible(!httpsByDefaultIsEnabled && mHttpsePref.isChecked());
+        mHttpsFirstModePref.setVisible(!httpsByDefaultIsEnabled);
         mHttpsUpgradePref.setVisible(httpsByDefaultIsEnabled);
 
         mCanMakePayment = (ChromeSwitchPreference) findPreference(PREF_CAN_MAKE_PAYMENT);
@@ -414,27 +407,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         String key = preference.getKey();
         SharedPreferences.Editor sharedPreferencesEditor =
                 ContextUtils.getAppSharedPreferences().edit();
-        if (PREF_HTTPSE.equals(key)) {
-            boolean newValueBool = (boolean) newValue;
-            BraveShieldsContentSettings.setHTTPSEverywherePref(newValueBool);
-            mHttpsFirstModePref.setVisible(newValueBool);
-            if (newValueBool) {
-                // Restore state of HTTPS_ONLY_MODE.
-                UserPrefs.get(Profile.getLastUsedRegularProfile())
-                        .setBoolean(Pref.HTTPS_ONLY_MODE_ENABLED,
-                                ContextUtils.getAppSharedPreferences().getBoolean(
-                                        PREF_HTTPS_ONLY_MODE_ENABLED_SAVED_STATE, false));
-                mHttpsFirstModePref.setChecked(UserPrefs.get(Profile.getLastUsedRegularProfile())
-                                                       .getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED));
-            } else {
-                // Save state for HTTPS_ONLY_MODE and disable it.
-                sharedPreferencesEditor.putBoolean(PREF_HTTPS_ONLY_MODE_ENABLED_SAVED_STATE,
-                        UserPrefs.get(Profile.getLastUsedRegularProfile())
-                                .getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED));
-                UserPrefs.get(Profile.getLastUsedRegularProfile())
-                        .setBoolean(Pref.HTTPS_ONLY_MODE_ENABLED, newValueBool);
-            }
-        } else if (PREF_HTTPS_FIRST_MODE.equals(key)) {
+        if (PREF_HTTPS_FIRST_MODE.equals(key)) {
             UserPrefs.get(Profile.getLastUsedRegularProfile())
                     .setBoolean(Pref.HTTPS_ONLY_MODE_ENABLED, (boolean) newValue);
         } else if (PREF_HTTPS_UPGRADE.equals(key)) {
@@ -640,16 +613,13 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
 
         mBlockScriptsPref.setChecked(BraveShieldsContentSettings.getJavascriptPref());
 
-        // HTTPSE and HTTPS only mode
-        final boolean httpseEnabled = BraveShieldsContentSettings.getHTTPSEverywherePref();
-        mHttpsePref.setChecked(httpseEnabled);
+        // HTTPS only mode
         boolean httpsByDefaultIsEnabled =
                 ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT);
-        mHttpsFirstModePref.setVisible(!httpsByDefaultIsEnabled && httpseEnabled);
-        mHttpsFirstModePref.setChecked(httpseEnabled
-                        ? UserPrefs.get(Profile.getLastUsedRegularProfile())
-                                  .getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED)
-                        : false);
+        mHttpsFirstModePref.setVisible(!httpsByDefaultIsEnabled);
+        mHttpsFirstModePref.setChecked(
+            UserPrefs.get(Profile.getLastUsedRegularProfile())
+                                  .getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED));
 
         // IPFS Gateway
         mIpfsGatewayPref.setChecked(BravePrivacySettingsIPFSUtils.getIPFSGatewayPref());

@@ -65,9 +65,6 @@ if (!is_ios) {
       "filter_list_catalog_entry.h",
       "filter_list_service.cc",
       "filter_list_service.h",
-      "https_everywhere_recently_used_cache.h",
-      "https_everywhere_service.cc",
-      "https_everywhere_service.h",
     ]
 
     deps = [
