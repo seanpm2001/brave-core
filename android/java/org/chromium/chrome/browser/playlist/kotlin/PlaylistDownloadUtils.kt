@@ -12,7 +12,6 @@ import android.net.Uri
 import android.util.Log
 import com.brave.playlist.model.PlaylistItemModel
 import com.brave.playlist.util.ConstantUtils
-import org.chromium.chrome.browser.playlist.BraveChromiumHttpDataSource
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
@@ -44,18 +43,9 @@ object PlaylistDownloadUtils {
     private var mDownloadCache: Cache? = null
     private var mDownloadManager: DownloadManager? = null
 
-//    @Synchronized
-//    fun getHttpDataSourceFactory(): DataSource.Factory? {
-////        if (mHttpDataSourceFactory == null) {
-////            mHttpDataSourceFactory = BraveChromiumHttpDataSource.Factory()
-////        }
-//        return BraveChromiumHttpDataSource.Factory()
-//    }
-
     @Synchronized
     fun getDataSourceFactory(context: Context): DataSource.Factory {
         if (mDataSourceFactory == null) {
-            // val upstreamFactory = DataSource.Factory { BraveChromiumHttpDataSource(BraveVpnNativeWorker.output.toByteArray()) }
             val upstreamFactory = FileDataSource.Factory()
             mDataSourceFactory =
                 getDownloadCache(context)?.let { buildReadOnlyCacheDataSource(upstreamFactory, it) }
