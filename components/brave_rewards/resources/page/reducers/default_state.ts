@@ -12,6 +12,7 @@ export function defaultState (): Rewards.State {
   return {
     isGrandfatheredUser: false,
     userType: 'unconnected',
+    earningsDisabled: false,
     isAcSupported: false,
     enabledContribute: false,
     contributionMinTime: 8,
