@@ -178,12 +178,12 @@ public class BraveVpnNativeWorker {
         // } else {
         //     output = new ByteArrayOutputStream();
         // }
-        try {
-            pipedInputStream = new PipedInputStream();
-            pipedOutputStream = new PipedOutputStream(pipedInputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     pipedInputStream = new PipedInputStream();
+        //     pipedOutputStream = new PipedOutputStream(pipedInputStream);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
         // this.url = url;
         // this.contentLength = contentLength;
         // this.url.complete(url);
@@ -198,22 +198,24 @@ public class BraveVpnNativeWorker {
     @CalledByNative
     synchronized public void onDataReceived(byte[] response) {
         Log.e("data_source", "onDataReceived : response : " + response.length);
-        PostTask.postTask(TaskTraits.BEST_EFFORT_MAY_BLOCK, () -> {
-            // try {
-            //     output.write(response);
-            //     if (output.toByteArray().length > readLength) {
-            //         responseLength.complete(output.toByteArray().length);
-            //     }
-            //     // tempStorage.add(response);
-            // } catch (Exception e) {
-            //     Log.e("data_source", e.getMessage());
-            // }
-            try {
-                pipedOutputStream.write(response);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        PostTask.postTask(TaskTraits.BEST_EFFORT_MAY_BLOCK,
+                ()
+                        -> {
+                                // try {
+                                //     output.write(response);
+                                //     if (output.toByteArray().length > readLength) {
+                                //         responseLength.complete(output.toByteArray().length);
+                                //     }
+                                //     // tempStorage.add(response);
+                                // } catch (Exception e) {
+                                //     Log.e("data_source", e.getMessage());
+                                // }
+                                // try {
+                                //     pipedOutputStream.write(response);
+                                // } catch (IOException e) {
+                                //     e.printStackTrace();
+                                // }
+                        });
         for (BraveVpnObserver observer : mObservers) {
             observer.onDataReceived(response);
         }
