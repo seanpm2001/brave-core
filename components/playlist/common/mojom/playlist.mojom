@@ -125,6 +125,7 @@ interface PlaylistService {
 
   AddObserver(pending_remote<PlaylistServiceObserver> observer);
   AddObserverForStreaming(pending_remote<PlaylistStreamingObserver> observer);
+  ClearObserverForStreaming();
 };
 
 // UI-side handler for response from the service.

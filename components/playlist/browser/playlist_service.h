@@ -189,6 +189,7 @@ class PlaylistService : public KeyedService,
       mojo::PendingRemote<mojom::PlaylistServiceObserver> observer) override;
   void AddObserverForStreaming(
       mojo::PendingRemote<mojom::PlaylistStreamingObserver> observer) override;
+  void ClearObserverForStreaming() override;
 
   void OnMediaUpdatedFromContents(content::WebContents* contents);
 
