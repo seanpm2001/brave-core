@@ -380,7 +380,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
         }
         BlockersInfo blockersInfo = mTabsStat.get(tabId);
         updateValues(blockersInfo.mAdsBlocked + blockersInfo.mTrackersBlocked,
-                     blockersInfo.mScriptsBlocked, blockersInfo.mFingerprintsBlocked);
+                blockersInfo.mScriptsBlocked, blockersInfo.mFingerprintsBlocked);
     }
 
     public int getAdsBlockedCount(int tabId) {
@@ -424,9 +424,8 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
                     return;
                 }
                 try {
-                    mSiteBlockCounterText.setText(String.valueOf(fadsAndTrackers
-                                                  + fscriptsBlocked
-                                                  + ffingerprintsBlocked));
+                    mSiteBlockCounterText.setText(String.valueOf(
+                            fadsAndTrackers + fscriptsBlocked + ffingerprintsBlocked));
                 } catch (NullPointerException exc) {
                     // It means that the Bravery Panel was destroyed during the update, we just do nothing
                 }
@@ -982,7 +981,9 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 if (0 != mHost.length()) {
-                    BraveShieldsContentSettings.setShields(mProfile, mHost, BraveShieldsContentSettings.RESOURCE_IDENTIFIER_BRAVE_SHIELDS, isChecked, false);
+                    BraveShieldsContentSettings.setShields(mProfile, mHost,
+                            BraveShieldsContentSettings.RESOURCE_IDENTIFIER_BRAVE_SHIELDS,
+                            isChecked, false);
                     setupBlockingScriptsSwitch(mBraveShieldsBlockingScriptsSwitch, true);
                     setupForgetFirstPartyStorageSwitch(
                             mBraveShieldsForgetFirstPartyStorageSwitch, true);
