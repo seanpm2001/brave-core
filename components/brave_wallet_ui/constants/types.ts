@@ -116,6 +116,7 @@ export type PanelTypes =
   | 'activity' // Transactions
   | 'currencies'
   | 'transactionStatus'
+  | 'siweError'
 
 export type NavTypes =
   | 'crypto'
@@ -285,6 +286,7 @@ export interface PanelState {
   switchChainRequest: BraveWallet.SwitchChainRequest
   hardwareWalletCode?: HardwareWalletResponseCodeType
   selectedTransactionId?: string
+  signMessageErrorData: BraveWallet.SignMessageError[]
 }
 
 export interface PageState {
