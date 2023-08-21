@@ -47,7 +47,7 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
     private ObservableSupplier<Integer> mConstraintsProxy;
 
     public BraveTopToolbarCoordinator(ToolbarControlContainer controlContainer,
-            ViewStub toolbarStub, ViewStub fullscreenToolbarStub, ToolbarLayout toolbarLayout,
+            ViewStub toolbarStub, ToolbarLayout toolbarLayout,
             ToolbarDataProvider toolbarDataProvider, ToolbarTabController tabController,
             UserEducationHelper userEducationHelper, List<ButtonDataProvider> buttonDataProviders,
             OneshotSupplier<LayoutStateProvider> layoutStateProviderSupplier,
@@ -72,9 +72,9 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
             BrowserStateBrowserControlsVisibilityDelegate
                     browserStateBrowserControlsVisibilityDelegate,
             boolean shouldCreateLogoInStartToolbar, FullscreenManager fullscreenManager) {
-        super(controlContainer, toolbarStub, fullscreenToolbarStub, toolbarLayout,
-                toolbarDataProvider, tabController, userEducationHelper, buttonDataProviders,
-                layoutStateProviderSupplier, normalThemeColorProvider, overviewThemeColorProvider,
+        super(controlContainer, toolbarStub, toolbarLayout, toolbarDataProvider, tabController,
+                userEducationHelper, buttonDataProviders, layoutStateProviderSupplier,
+                normalThemeColorProvider, overviewThemeColorProvider,
                 browsingModeMenuButtonCoordinator, overviewModeMenuButtonCoordinator,
                 appMenuButtonHelperSupplier, tabModelSelectorSupplier, homepageEnabledSupplier,
                 identityDiscController, invalidatorCallback, identityDiscButtonSupplier,
@@ -94,9 +94,9 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
             if (!isStartSurfaceEnabled) {
                 mTabSwitcherModeCoordinator = new BraveTabSwitcherModeTTCoordinator(
                         controlContainer.getRootView().findViewById(R.id.tab_switcher_toolbar_stub),
-                        fullscreenToolbarStub, overviewModeMenuButtonCoordinator,
-                        isGridTabSwitcherEnabled, isTabToGtsAnimationEnabled,
-                        isIncognitoModeEnabledSupplier, mToolbarColorObserverManager);
+                        overviewModeMenuButtonCoordinator, isGridTabSwitcherEnabled,
+                        isTabToGtsAnimationEnabled, isIncognitoModeEnabledSupplier,
+                        mToolbarColorObserverManager);
             }
         }
     }
