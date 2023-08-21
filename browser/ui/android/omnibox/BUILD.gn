@@ -42,6 +42,7 @@ android_library("java") {
     "//components/prefs/android:java",
     "//components/search_engines/android:java",
     "//components/user_prefs/android:java",
+    "//content/public/android:content_full_java",
     "//third_party/androidx:androidx_annotation_annotation_java",
     "//third_party/androidx:androidx_recyclerview_recyclerview_java",
     "//ui/android:ui_no_recycler_view_java",
