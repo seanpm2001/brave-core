@@ -124,6 +124,8 @@ static_library("engine") {
     "bitflyer/bitflyer_util.h",
     "common/brotli_util.cc",
     "common/brotli_util.h",
+    "common/callback_scope.cc",
+    "common/callback_scope.h",
     "common/legacy_callback_helpers.h",
     "common/random_util.cc",
     "common/random_util.h",

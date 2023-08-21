@@ -49,8 +49,11 @@ RewardsEngineImpl::~RewardsEngineImpl() {
 // Mojom)
 void RewardsEngineImpl::Initialize(InitializeCallback callback) {
   context().Get<InitializationManager>().Initialize(
-      base::BindOnce(&RewardsEngineImpl::OnInitializationComplete,
-                     weak_factory_.GetWeakPtr(), std::move(callback)));
+      callback_([this, callback = std::move(callback)](bool success) mutable {
+        ready_event_.Signal();
+        std::move(callback).Run(success ? mojom::Result::OK
+                                        : mojom::Result::FAILED);
+      }));
 }
 
 void RewardsEngineImpl::GetEnvironment(GetEnvironmentCallback callback) {
@@ -677,8 +680,10 @@ void RewardsEngineImpl::GetAllPromotions(GetAllPromotionsCallback callback) {
 
 void RewardsEngineImpl::Shutdown(ShutdownCallback callback) {
   context().Get<InitializationManager>().Shutdown(
-      base::BindOnce(&RewardsEngineImpl::OnShutdownComplete,
-                     weak_factory_.GetWeakPtr(), std::move(callback)));
+      callback_([callback = std::move(callback)](bool success) mutable {
+        std::move(callback).Run(success ? mojom::Result::OK
+                                        : mojom::Result::FAILED);
+      }));
 }
 
 void RewardsEngineImpl::GetEventLogs(GetEventLogsCallback callback) {
@@ -781,9 +786,7 @@ void RewardsEngineImpl::WhenReady(T callback) {
       NOTREACHED();
       break;
     default:
-      ready_event_.Post(
-          FROM_HERE,
-          base::BindOnce([](T callback) { callback(); }, std::move(callback)));
+      ready_event_.Post(FROM_HERE, callback_(std::move(callback)));
       break;
   }
 }

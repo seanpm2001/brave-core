@@ -16,6 +16,7 @@
 #include "brave/components/brave_rewards/common/mojom/rewards_engine.mojom.h"
 #include "brave/components/brave_rewards/core/api/api.h"
 #include "brave/components/brave_rewards/core/bitflyer/bitflyer.h"
+#include "brave/components/brave_rewards/core/common/callback_scope.h"
 #include "brave/components/brave_rewards/core/contribution/contribution.h"
 #include "brave/components/brave_rewards/core/database/database.h"
 #include "brave/components/brave_rewards/core/gemini/gemini.h"
@@ -410,7 +411,7 @@ class RewardsEngineImpl : public mojom::RewardsEngine {
   uint64_t last_tab_active_time_ = 0;
   uint32_t last_shown_tab_id_ = -1;
   base::OneShotEvent ready_event_;
-  base::WeakPtrFactory<RewardsEngineImpl> weak_factory_{this};
+  CallbackScope callback_;
 };
 
 }  // namespace brave_rewards::internal
