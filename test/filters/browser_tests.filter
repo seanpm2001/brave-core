@@ -107,6 +107,7 @@
 -SearchPreloadUnifiedFallbackBrowserTest.PrefetchSucceedAfterPrerenderFailed
 -SearchPreloadUnifiedFallbackBrowserTest.PrerenderHintReceivedAfterCompletion
 -SearchPreloadUnifiedFallbackBrowserTest.ServingToPrerenderingUntilCompletion
+-SearchPreloadUnifiedFallbackBrowserTest.ServingToPrerenderNavigationTwice
 
 # These tests fail because of the following failed expectation in prerender_test_util.cc:
 # Expected: (host_id) != (RenderFrameHost::kNoFrameTreeNodeId), actual: -1 vs -1
@@ -281,6 +282,7 @@
 -IsolatedWebAppBrowserServiceWorkerTest.ServiceWorkerPartitioned
 -IsolatedWebAppBrowsingDataClearingTest.CacheCleared
 -IsolatedWebAppBrowsingDataClearingTest.ClearBrowserDataAllTime
+-IsolatedWebAppBrowsingDataClearingTest.ClearBrowserDataTimeRanged
 -IsolatedWebAppBrowsingDataClearingTest.CookieCleared
 -IsolatedWebAppBrowsingDataClearingTest.DataClearedOnUninstall
 -IsolatedWebAppBrowsingDataClearingTest.LocalStorageCleared
@@ -321,6 +323,7 @@
 # These tests fail because we patch
 # AccountConsistencyModeManager::ComputeAccountConsistencyMethod to return
 # AccountConsistencyMethod::kDisabled
+-ContextMenuWithFilteringForSupervisedUsersBrowserTest.SaveLinkAsEntryIsDisabledForUrlsBlockedByAsyncCheckerForChild
 -ContextMenuWithFilteringForSupervisedUsersBrowserTest.SaveLinkAsEntryIsEnabledForUrlsAllowedByAsyncCheckerForChild
 -ContextMenuWithoutFilteringForSupervisedUsersBrowserTest.SaveLinkAsEntryIsDisabledForUrlsBlockedByAsyncCheckerForChild
 -ContextMenuWithoutFilteringForSupervisedUsersBrowserTest.SaveLinkAsEntryIsEnabledForUrlsAllowedByAsyncCheckerForChild
@@ -565,6 +568,7 @@
 -EnterpriseWelcomeUIWindowPixelTest.InvokeUi_default/*
 -GaiaRemoteConsentFlowParamBrowserTest.*
 -PasswordRevampedManagementBubbleBrowserTest.InvokeUi_ManagePasswordBubbleWithRevampedDesign/*
+-PlusAddressServiceBrowserTest.VerifySupportsPlusAddresses
 -SyncConfirmationUIDialogPixelTest.InvokeUi_default/*
 -SyncConfirmationUIWindowPixelTest.InvokeUi_default/*
 
@@ -970,6 +974,10 @@
 # Page Info cookies view.
 -All/PageInfoBubbleViewBrowserTestCookiesSubpage.LinkInDescriptionForCookiesSettings/*
 -All/PageInfoBubbleViewBrowserTestCookiesSubpage.ToggleForBlockingThirdPartyCookies/1
+
+# These tests fail because we disable Journeys via
+# history_clusters::internal::kJourneys
+-RenameJourneys/HistoryClustersPolicyTest.HistoryClustersVisible/*
 
 # Tests below this point have not been diagnosed or had issues created yet.
 -_/WebrtcLoggingPrivateApiStartEventLoggingTestFeatureAndPolicyEnabled.*
@@ -1455,7 +1463,9 @@
 -ProfileKeyedServiceBrowserTest.GuestProfileOTR_NeededServices
 -ProfileKeyedServiceBrowserTest.GuestProfileParent_NeededServices
 -ProfileKeyedServiceBrowserTest.SystemProfileOTR_NeededServices
+-ProfileKeyedServiceBrowserTest.SystemProfileOTR_ServicesThatCanBeCreated
 -ProfileKeyedServiceBrowserTest.SystemProfileParent_NeededServices
+-ProfileKeyedServiceBrowserTest.SystemProfileParent_ServicesThatCanBeCreated
 -ProfileListDesktopBrowserTest.*
 -ProfileMainNetworkContext/NetworkContextConfigurationBrowserTest.*
 -ProfileMainNetworkContext/NetworkContextConfigurationDataPacBrowserTest.*
