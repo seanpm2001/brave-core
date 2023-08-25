@@ -219,9 +219,6 @@ android_aar_prebuilt("com_google_android_play_app_update_java") {
   aar_path = "libs/com_google_android_play_app_update/app-update-2.1.0.aar"
   info_path = "libs/com_google_android_play_app_update/com_google_android_play_app_update.info"
   deps = [
-    "//third_party/android_deps:com_google_android_play_core_common_java",
-    "//third_party/android_deps:google_play_services_basement_java",
-    "//third_party/android_deps:google_play_services_tasks_java",
+    "//third_party/android_deps:com_google_android_play_feature_delivery_java",
   ]
-  resource_overlay = true
 }
