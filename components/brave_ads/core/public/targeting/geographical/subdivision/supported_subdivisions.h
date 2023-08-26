@@ -6,6 +6,8 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_ADS_CORE_PUBLIC_TARGETING_GEOGRAPHICAL_SUBDIVISION_SUPPORTED_SUBDIVISIONS_H_
 #define BRAVE_COMPONENTS_BRAVE_ADS_CORE_PUBLIC_TARGETING_GEOGRAPHICAL_SUBDIVISION_SUPPORTED_SUBDIVISIONS_H_
 
+#include <string>
+
 #include "base/containers/flat_map.h"
 #include "base/strings/string_piece_forward.h"
 #include "base/values.h"
@@ -21,7 +23,9 @@ using SupportedSubdivisionMap =
 
 ADS_EXPORT const SupportedSubdivisionMap& GetSupportedSubdivisions();
 
-ADS_EXPORT base::Value::List GetSupportedSubdivisionsAsValueList();
+base::Value::List GetSupportedSubdivisionsAsValueList(
+    const std::string& user_selected_subdivision,
+    const std::string& auto_detected_subdivision);
 
 }  // namespace brave_ads
 
