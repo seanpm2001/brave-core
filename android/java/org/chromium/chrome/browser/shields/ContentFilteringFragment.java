@@ -62,7 +62,7 @@ public class ContentFilteringFragment extends BravePreferenceFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         if (getActivity() != null) {
-            getActivity().setTitle(R.string.filter_lists_title);
+            getActivity().setTitle(R.string.content_filters_title);
         }
         super.onActivityCreated(savedInstanceState);
         setData();

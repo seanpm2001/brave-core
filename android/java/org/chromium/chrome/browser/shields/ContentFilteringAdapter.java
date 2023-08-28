@@ -55,9 +55,8 @@ public class ContentFilteringAdapter extends RecyclerView.Adapter<RecyclerView.V
                 customFilterHeaderViewHolder.titleText.setText(R.string.custom_filter_lists);
                 customFilterHeaderViewHolder.summaryText.setVisibility(View.GONE);
             } else {
-                customFilterHeaderViewHolder.titleText.setText(R.string.default_filter_lists);
-                customFilterHeaderViewHolder.summaryText.setText(
-                        R.string.default_filter_lists_summary);
+                customFilterHeaderViewHolder.titleText.setText(R.string.filter_lists);
+                customFilterHeaderViewHolder.summaryText.setText(R.string.filter_lists_summary);
                 customFilterHeaderViewHolder.summaryText.setVisibility(View.VISIBLE);
             }
         } else if (holder instanceof CustomFilterListViewHolder) {
