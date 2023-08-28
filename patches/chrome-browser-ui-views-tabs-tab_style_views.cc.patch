@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/tabs/tab_style_views.cc b/chrome/browser/ui/views/tabs/tab_style_views.cc
-index b28e10e13e1c8c1c23e9ea2b0581ebbcb1a78524..d175de7fd3025223d280fafc0e5f8eb6961c6dd8 100644
+index 3e917d0207c85715805d77dcba8fecdffb53d1a9..3c3bbe59879d59f2923e9ad805482e4b3393c58a 100644
 --- a/chrome/browser/ui/views/tabs/tab_style_views.cc
 +++ b/chrome/browser/ui/views/tabs/tab_style_views.cc
-@@ -135,6 +135,7 @@ class GM2TabStyleViews : public TabStyleViews {
+@@ -138,6 +138,7 @@ class GM2TabStyleViews : public TabStyleViews {
    TabStyle::TabSelectionState GetSelectionState() const;
  
   private:
@@ -10,7 +10,7 @@ index b28e10e13e1c8c1c23e9ea2b0581ebbcb1a78524..d175de7fd3025223d280fafc0e5f8eb6
    // Gets the bounds for the leading and trailing separators for a tab.
    TabStyle::SeparatorBounds GetSeparatorBounds(float scale) const;
  
-@@ -288,6 +289,7 @@ SkPath GM2TabStyleViews::GetPath(TabStyle::PathType path_type,
+@@ -292,6 +293,7 @@ SkPath GM2TabStyleViews::GetPath(TabStyle::PathType path_type,
    const ShapeModifier shape_modifier = GetShapeModifier(path_type);
    const bool extend_left_to_bottom = shape_modifier & kNoLowerLeftArc;
    const bool extend_right_to_bottom = shape_modifier & kNoLowerRightArc;

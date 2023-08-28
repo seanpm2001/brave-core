@@ -1,12 +1,12 @@
 diff --git a/content/browser/resources/gpu/info_view.ts b/content/browser/resources/gpu/info_view.ts
-index 96c08f76e4bc776bac1d5684cd47c674fd1b156c..3e72404abda0f02b686c6242d799632e67597d7b 100644
+index 918bf8b4f710f0de5302266098faace06aab83b6..aea6893096e52141177042b79b24b8757d906c39 100644
 --- a/content/browser/resources/gpu/info_view.ts
 +++ b/content/browser/resources/gpu/info_view.ts
-@@ -114,6 +114,7 @@ export class InfoViewElement extends CustomElement {
+@@ -537,6 +537,7 @@ export class InfoViewElement extends CustomElement {
            value: clientInfo.graphics_backend,
          },
          {description: 'Command Line', value: clientInfo.command_line},
 +        {description: 'Executable path', value: clientInfo.executable_path},
        ]);
      } else {
-       this.setText_('client-info', '... loading...');
+       sections.clientInfo.list.textContent = '... loading ...';

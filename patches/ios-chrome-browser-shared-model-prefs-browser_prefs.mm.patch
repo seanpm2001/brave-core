@@ -1,5 +1,5 @@
 diff --git a/ios/chrome/browser/shared/model/prefs/browser_prefs.mm b/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
-index e69edb3c2f5b60776e9c670e92ff47d423b9963e..4c35fa498516c7fdd40c107e8d9b2bfea58c0f2d 100644
+index d292712550acef255561a07975f758ccec574688..9ce267eead09db57f71701f0bfe86e1eb0e6fa05 100644
 --- a/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
 +++ b/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
 @@ -303,6 +303,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
@@ -10,15 +10,15 @@ index e69edb3c2f5b60776e9c670e92ff47d423b9963e..4c35fa498516c7fdd40c107e8d9b2bfe
  }
  
  void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
-@@ -487,6 +488,7 @@ void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
-   // Preferences related to Save to Photos settings.
-   registry->RegisterStringPref(prefs::kIosSaveToPhotosDefaultGaiaId,
-                                std::string());
+@@ -490,6 +491,7 @@ void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
+ 
+   registry->RegisterBooleanPref(prefs::kIosParcelTrackingOptInPromptDisplayed,
+                                 false);
 +  BRAVE_REGISTER_BROWSER_STATE_PREFS
  }
  
  // This method should be periodically pruned of year+ old migrations.
-@@ -575,6 +577,7 @@ void MigrateObsoleteBrowserStatePrefs(PrefService* prefs) {
+@@ -578,6 +580,7 @@ void MigrateObsoleteBrowserStatePrefs(PrefService* prefs) {
    invalidation::InvalidatorRegistrarWithMemory::ClearDeprecatedPrefs(prefs);
    invalidation::PerUserTopicSubscriptionManager::ClearDeprecatedPrefs(prefs);
    invalidation::FCMInvalidationService::ClearDeprecatedPrefs(prefs);
