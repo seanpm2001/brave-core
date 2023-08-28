@@ -87,14 +87,33 @@ public class DownloadServiceImpl extends DownloadService.Impl implements Connect
         //     @Override
         //     public void run() {
         //         try {
-        downloadHlsContent();
+        // downloadHlsContent();
         //         } catch (Exception e) {
         //             e.printStackTrace();
         //         }
         //     }
         // }.start();
-        getService().startForeground(
-                BRAVE_PLAYLIST_DOWNLOAD_NOTIFICATION_ID, getDownloadNotification("", false, 0, 0));
+        DownloadUtils.downloadFile(mPlaylistService,
+                "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+                new DownloadUtils.PlaylistDownloadDelegate() {
+                    @Override
+                    public void onDownloadStarted(String url, long contentLength) {
+                        getService().startForeground(BRAVE_PLAYLIST_DOWNLOAD_NOTIFICATION_ID,
+                                getDownloadNotification("", false, 0, 0));
+                    }
+
+                    @Override
+                    public void onDownloadProgress(long totalBytes, long downloadedSofar) {
+                        updateDownloadNotification(
+                                "Progress", true, (int) totalBytes, (int) downloadedSofar);
+                    }
+
+                    @Override
+                    public void onDownloadCompleted() {
+                        getService().stopForeground(true);
+                        getService().stopSelf();
+                    }
+                });
         return Service.START_NOT_STICKY;
     }
 
