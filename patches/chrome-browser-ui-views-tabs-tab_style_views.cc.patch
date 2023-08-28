@@ -18,17 +18,7 @@ index 3e917d0207c85715805d77dcba8fecdffb53d1a9..3c3bbe59879d59f2923e9ad805482e4b
  
    SkPath path;
  
-@@ -608,8 +610,7 @@ TabStyle::SeparatorBounds GM2TabStyleViews::GetSeparatorBounds(
-       aligned_bounds.x() + corner_radius - separator_margin.right() -
-           separator_size.width(),
-       aligned_bounds.y() + (aligned_bounds.height() - separator_size.height() -
--                            separator_margin.bottom()) /
--                               2,
-+                            separator_margin.bottom()),
-       separator_size.width(), separator_size.height());
- 
-   separator_bounds.trailing = separator_bounds.leading;
-@@ -1019,14 +1020,18 @@ void GM2TabStyleViews::PaintSeparators(gfx::Canvas* canvas) const {
+@@ -1028,14 +1030,18 @@ void GM2TabStyleViews::PaintSeparators(gfx::Canvas* canvas) const {
                                                     SK_AlphaOPAQUE));
    };
  
