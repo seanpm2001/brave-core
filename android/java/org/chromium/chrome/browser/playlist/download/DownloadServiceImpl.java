@@ -83,17 +83,7 @@ public class DownloadServiceImpl extends DownloadService.Impl implements Connect
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // new Thread() {
-        //     @Override
-        //     public void run() {
-        //         try {
-        // downloadHlsContent();
-        //         } catch (Exception e) {
-        //             e.printStackTrace();
-        //         }
-        //     }
-        // }.start();
-        DownloadUtils.downloadFile(mPlaylistService,
+        DownloadUtils.downloadFile(mPlaylistService, false,
                 "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
                 new DownloadUtils.PlaylistDownloadDelegate() {
                     @Override
@@ -171,91 +161,6 @@ public class DownloadServiceImpl extends DownloadService.Impl implements Connect
         NotificationManager mNotificationManager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(BRAVE_PLAYLIST_DOWNLOAD_NOTIFICATION_ID, notification);
-    }
-
-    private void downloadHlsContent() {
-        // String extension = playlistItemModel.getMediaPath().substring(
-        //         playlistItemModel.getMediaPath().lastIndexOf("."));
-        // Log.e("data_source", "extension : " + extension);
-        // // if (playlistItemModel.isCached() && extension == ".m3u8") {
-        // final String manifestUrl =
-        //         HLSParsingUtil.getContentManifestUrl(PlaylistHostActivity.this,
-        //         playlistItemModel);
-        String url = "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
-        Log.e("DownloadService", "queryPrompt : " + url);
-        if (mPlaylistService != null) {
-            mPlaylistService.queryPrompt(url, "GET");
-            PlaylistStreamingObserver playlistStreamingObserverImpl =
-                    new PlaylistStreamingObserver() {
-                        long fileLength = 0l;
-                        long downloadedSofar = 0l;
-                        @Override
-                        public void onResponseStarted(String url, long contentLength) {
-                            fileLength = contentLength;
-                            try {
-                                Log.e("DownloadService", "onResponseStarted : " + url);
-                                File mediaFile = new File(
-                                        MediaUtils.getTempFile(ContextUtils.getApplicationContext())
-                                                .getAbsolutePath());
-                                if (mediaFile.exists()) {
-                                    mediaFile.delete();
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onDataReceived(byte[] response) {
-                            Log.e("DownloadService", "onDataReceived : " + response.length);
-                            downloadedSofar = downloadedSofar + response.length;
-                            try {
-                                MediaUtils.writeToFile(response,
-                                        MediaUtils.getTempFile(ContextUtils.getApplicationContext())
-                                                .getAbsolutePath());
-                                updateDownloadNotification(
-                                        "Progress", true, (int) fileLength, (int) downloadedSofar);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onDataCompleted() {
-                            Log.e("DownloadService", "onDataCompleted : ");
-                            try {
-                                // List<Segment> segments = HLSParsingUtil.getContentSegments(
-                                //         MediaUtils.getTempManifestFile(PlaylistHostActivity.this)
-                                //                 .getAbsolutePath(),
-                                //         manifestUrl);
-                                // for (Segment segment : segments) {
-                                //     // Log.e("data_source",
-                                //     //         "segment.url : " +
-                                //     //         UriUtil.resolve(manifestUrl,
-                                //     //         segment.url));
-                                //     segmentsQueue.add(segment);
-                                // }
-                                // mPlaylistService.clearObserverForStreaming();
-                                // Segment segment = segmentsQueue.poll();
-                                // if (segment != null) {
-                                //     downalodHLSFile(manifestUrl, segment);
-                                // }
-                                getService().stopForeground(true);
-                                getService().stopSelf();
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void close() {}
-
-                        @Override
-                        public void onConnectionError(MojoException e) {}
-                    };
-
-            mPlaylistService.addObserverForStreaming(playlistStreamingObserverImpl);
-        }
     }
 
     @Override
