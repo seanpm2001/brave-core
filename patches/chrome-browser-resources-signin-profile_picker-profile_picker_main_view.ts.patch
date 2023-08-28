@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/signin/profile_picker/profile_picker_main_view.ts b/chrome/browser/resources/signin/profile_picker/profile_picker_main_view.ts
-index a784f86abf49545002b951a890a4416a6f26b614..fae8a847f091a4a5807833b032aaa5211530431d 100644
+index 3ca401a4337b8e4229021fe6faa0d30dbf25544c..e6a1f97d34a0a0e3d67f0cfb50a18e5e998bade1 100644
 --- a/chrome/browser/resources/signin/profile_picker/profile_picker_main_view.ts
 +++ b/chrome/browser/resources/signin/profile_picker/profile_picker_main_view.ts
 @@ -101,6 +101,7 @@ export class ProfilePickerMainViewElement extends
