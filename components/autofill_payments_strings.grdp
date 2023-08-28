@@ -113,8 +113,11 @@
       </message>
     </else>
   </if>
-  <message name="IDS_AUTOFILL_SAVE_CARD_PROMPT_TITLE_LOCAL" desc="Title text for the Autofill save card prompt when the card is to be saved locally. The prompt can be either a bubble or an infobar.">
+  <message name="IDS_AUTOFILL_SAVE_CARD_PROMPT_TITLE_LOCAL" desc="Title text for the Autofill save card prompt to save a card locally. It is shown when a new card is used during checkout, and Brave sync is not enabled. This prompt title is shown on both the Desktop bubble and the Android infobar.">
     Save card?
+  </message>
+  <message name="IDS_AUTOFILL_SAVE_CARD_PROMPT_EXPLANATION_LOCAL" desc="Explanation text for the Autofill save card prompt to save a card locally. It is shown when a new card is used during checkout, and Brave sync is not enabled. This prompt title is shown on both the Desktop bubble and the Android infobar.">
+    To pay faster next time, save your card to your device
   </message>
   <message name="IDS_AUTOFILL_SAVE_CVC_PROMPT_TITLE_LOCAL" desc="Title text for the Autofill save CVC prompt that offers to save CVC for existing local cards. This prompt is shown if a CVC is detected for an existing local card on form submission.">
     Save security code?
@@ -459,10 +462,13 @@
   <message name="IDS_AUTOFILL_CARD_UNMASK_PROGRESS_BAR_MESSAGE" desc="Message displayed after tapping a Virtual Card, and before any other verification steps.">
     Contacting your bank...
   </message>
-  <message name="IDS_AUTOFILL_CARD_UNMASK_CANCEL_BUTTON_LABEL" desc="Button that allows the user to cancel the Virtual Card unmasking process.">
+  <message name="IDS_AUTOFILL_MASKED_SERVER_CARD_RISK_BASED_UNMASK_PROGRESS_BAR_MESSAGE" desc="Loading message displayed after tapping a credit card entry in Autofill, before possibly showing the user any other verification steps.">
+    Using Brave’s security technology to keep your payment info secure
+  </message>
+  <message name="IDS_AUTOFILL_CARD_UNMASK_CANCEL_BUTTON_LABEL" desc="Button that allows the user to cancel the card unmasking process.">
     Cancel
   </message>
-  <message name="IDS_AUTOFILL_CARD_UNMASK_CONFIRMATION_MESSAGE" desc="Message displayed after tapping a Virtual Card, and the response from the bank indicates that no further verification is required.">
+  <message name="IDS_AUTOFILL_CARD_UNMASK_CONFIRMATION_MESSAGE" desc="Message displayed after tapping a card, and the response from the bank indicates that no further verification is required.">
     Verified
   </message>
   <message name="IDS_AUTOFILL_FIDO_AUTHENTICATION_PROMPT_TITLE" desc="Title for FIDO authentication progress dialog">
@@ -621,9 +627,6 @@
 
   <!-- virtual cards related strings - start -->
   <if expr="not is_ios and not is_android">
-    <message name="IDS_AUTOFILL_CLOUD_TOKEN_DROPDOWN_OPTION_LABEL" desc="Text shown in the button in the Autofill dropdown menu when a credit card form field is queried, to offer the option to use a virtual card.">
-      Use a virtual card number...
-    </message>
     <message name="IDS_AUTOFILL_VIRTUAL_CARD_ENROLLMENT_FALLBACK_ICON_TOOLTIP" desc="The tooltip message for the omnibox icon for the virtual card enroll bubble on Desktop. This bubble prompts users if they would like to enroll in a virtual card.">
       Add virtual card
     </message>
@@ -866,6 +869,9 @@
     </message>
     <message name="IDS_AUTOFILL_GPAY_PROMO_CODE_OFFERS_REMINDER_VALUE_PROP_TEXT" desc="The first line of the GPay promo code notification bubble, consisting of the value prop text and a see details link">
       <ph name="VALUE_PROP">$1<ex>5% off on shoes. Up to $50.</ex></ph> <ph name="DETAILS">$2<ex>See Details</ex></ph>
+    </message>
+    <message name="IDS_AUTOFILL_PROMO_CODE_OFFERS_USE_THIS_CODE_TEXT" desc="Text used in the promo code notification bubble to inform the user they can use the displayed promo code during checkout.">
+      Use this code at checkout
     </message>
   </if>
 

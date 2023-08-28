@@ -356,7 +356,7 @@ CHAR_LIMIT guidelines:
         No preloading
       </message>
       <message name="IDS_PRELOAD_PAGES_NO_PRELOADING_SUMMARY" desc="Short explanation of what the no preloading mode does in the Preload Pages setting.">
-        Pages load only after you open them.
+        Pages load only after you open them
       </message>
       <message name="IDS_PRELOAD_PAGES_STANDARD_PRELOADING_TITLE" desc="Name of the standard preloading option for the Preload Pages settings page. This option enables preloading pages that Brave believes the user is likely to navigate to. [CHAR_LIMIT=32]">
         Standard preloading
@@ -1752,6 +1752,9 @@ Your Brave account may have other forms of browsing history like searches and ac
       <message name="IDS_SAFE_BROWSING_STANDARD_PROTECTION_SUMMARY_UPDATED" desc="Summary for Safe Browsing standard protection mode.">
         Protects against sites, downloads, and extensions that are known to be dangerous. If a page does something suspicious, URLs and bits of page content are sent to Google Safe Browsing.
       </message>
+      <message name="IDS_SAFE_BROWSING_STANDARD_PROTECTION_SUMMARY_UPDATED_PROXY" desc="Summary for Safe Browsing standard protection mode with proxy.">
+        Protects against sites, downloads, and extensions that are known to be dangerous. When you visit a site, Brave sends an obfuscated portion of the URL to Brave through a privacy server that hides your IP address. If a site does something suspicious, full URLs and bits of page content are also sent.
+      </message>
       <message name="IDS_SAFE_BROWSING_NO_PROTECTION_TITLE" desc="Title for Safe Browsing no protection mode. [CHAR_LIMIT=32]">
         No protection (not recommended)
       </message>
@@ -1821,6 +1824,9 @@ Your Brave account may have other forms of browsing history like searches and ac
       </message>
       <message name="IDS_SAFE_BROWSING_STANDARD_PROTECTION_BULLET_TWO" desc="Second bullet point under the Safe Browsing standard protection mode.">
         Checks URLs with a list of unsafe sites stored in Brave. If a site tries to steal your password, or when you download a harmful file, Brave may also send URLs, including bits of page content, to Safe Browsing.
+      </message>
+      <message name="IDS_SAFE_BROWSING_STANDARD_PROTECTION_BULLET_TWO_PROXY" desc="Second bullet point under the Safe Browsing standard protection mode when proxy is enabled.">
+        Sends an obfuscated portion of the URL to Brave through a privacy server that hides your IP address. If a site tries to steal your password, or when you download a harmful file, Brave may also send URLs, including bits of page content, to Brave.
       </message>
       <message name="IDS_SAFE_BROWSING_STANDARD_PROTECTION_EXTENDED_REPORTING_TITLE" desc="Title for Safe Browsing extended reporting.">
         Help improve security on the web
