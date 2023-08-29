@@ -28,9 +28,13 @@ class FilterListCatalogEntry {
                          const std::string& title,
                          const std::vector<std::string>& langs,
                          const std::string& support_url,
+                         const std::string& desc,
+                         bool hidden,
+                         bool default_enabled,
+                         bool first_party_protections,
+                         uint8_t permission_mask,
                          const std::string& component_id,
                          const std::string& base64_public_key,
-                         const std::string& desc,
                          const std::string& ios_component_id,
                          const std::string& ios_base64_public_key);
   explicit FilterListCatalogEntry(const FilterListCatalogEntry& other);
@@ -41,9 +45,16 @@ class FilterListCatalogEntry {
   std::string title;
   std::vector<std::string> langs;
   std::string support_url;
+  std::string desc;
+
+  // Optional fields with default values
+  bool hidden = false;
+  bool default_enabled = false;
+  bool first_party_protections = false;
+  uint8_t permission_mask = 0;
+
   std::string component_id;
   std::string base64_public_key;
-  std::string desc;
   std::string ios_component_id;
   std::string ios_base64_public_key;
 
