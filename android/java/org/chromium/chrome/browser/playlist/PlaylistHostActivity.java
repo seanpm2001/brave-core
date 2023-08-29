@@ -10,6 +10,7 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import static java.lang.Math.min;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -60,6 +61,7 @@ import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.init.AsyncInitializationActivity;
 import org.chromium.chrome.browser.playlist.PlaylistServiceObserverImpl.PlaylistServiceObserverImplDelegate;
 import org.chromium.chrome.browser.playlist.PlaylistStreamingObserverImpl.PlaylistStreamingObserverImplDelegate;
+import org.chromium.chrome.browser.playlist.download.DownloadService;
 import org.chromium.chrome.browser.playlist.settings.BravePlaylistPreferences;
 import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
 import org.chromium.chrome.browser.util.TabUtils;
@@ -138,88 +140,92 @@ public class PlaylistHostActivity extends AsyncInitializationActivity
 
         mPlaylistViewModel.getOpenPlaylistStream().observe(
                 PlaylistHostActivity.this, playlistItemModel -> {
-                    String extension = playlistItemModel.getMediaPath().substring(
-                            playlistItemModel.getMediaPath().lastIndexOf("."));
-                    Log.e("data_source", "extension : " + extension);
-                    // if (playlistItemModel.isCached() && extension == ".m3u8") {
-                    final String manifestUrl = HLSParsingUtil.getContentManifestUrl(
-                            PlaylistHostActivity.this, playlistItemModel);
-                    if (mPlaylistService != null) {
-                        // Log.e("data_source", "queryPrompt : "+manifestUrl);
-                        mPlaylistService.queryPrompt(manifestUrl, "GET");
-                        PlaylistStreamingObserver playlistStreamingObserverImpl =
-                                new PlaylistStreamingObserver() {
-                                    @Override
-                                    public void onResponseStarted(String url, long contentLength) {
-                                        try {
-                                            Log.e("data_source",
-                                                    "onResponseStarted : " + manifestUrl);
-                                            File mediaFile = new File(
-                                                    MediaUtils
-                                                            .getTempManifestFile(
-                                                                    PlaylistHostActivity.this)
-                                                            .getAbsolutePath());
-                                            if (mediaFile.exists()) {
-                                                mediaFile.delete();
-                                            }
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace();
-                                        }
-                                    }
+                    Intent intent = new Intent(PlaylistHostActivity.this, DownloadService.class);
+                    intent.putExtra("id", playlistItemModel.getId());
+                    startService(intent);
+                    // String extension = playlistItemModel.getMediaPath().substring(
+                    //         playlistItemModel.getMediaPath().lastIndexOf("."));
+                    // Log.e("data_source", "extension : " + extension);
+                    // // if (playlistItemModel.isCached() && extension == ".m3u8") {
+                    // final String manifestUrl = HLSParsingUtil.getContentManifestUrl(
+                    //         PlaylistHostActivity.this, playlistItemModel);
+                    // if (mPlaylistService != null) {
+                    //     // Log.e("data_source", "queryPrompt : "+manifestUrl);
+                    //     mPlaylistService.queryPrompt(manifestUrl, "GET");
+                    //     PlaylistStreamingObserver playlistStreamingObserverImpl =
+                    //             new PlaylistStreamingObserver() {
+                    //                 @Override
+                    //                 public void onResponseStarted(String url, long contentLength)
+                    //                 {
+                    //                     try {
+                    //                         Log.e("data_source",
+                    //                                 "onResponseStarted : " + manifestUrl);
+                    //                         File mediaFile = new File(
+                    //                                 MediaUtils
+                    //                                         .getTempManifestFile(
+                    //                                                 PlaylistHostActivity.this)
+                    //                                         .getAbsolutePath());
+                    //                         if (mediaFile.exists()) {
+                    //                             mediaFile.delete();
+                    //                         }
+                    //                     } catch (Exception ex) {
+                    //                         ex.printStackTrace();
+                    //                     }
+                    //                 }
 
-                                    @Override
-                                    public void onDataReceived(byte[] response) {
-                                        // Log.e("data_source",
-                                        //         "onDataReceived : " + response.length);
-                                        try {
-                                            MediaUtils.writeToFile(response,
-                                                    MediaUtils
-                                                            .getTempManifestFile(
-                                                                    PlaylistHostActivity.this)
-                                                            .getAbsolutePath());
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace();
-                                        }
-                                    }
+                    //                 @Override
+                    //                 public void onDataReceived(byte[] response) {
+                    //                     // Log.e("data_source",
+                    //                     //         "onDataReceived : " + response.length);
+                    //                     try {
+                    //                         MediaUtils.writeToFile(response,
+                    //                                 MediaUtils
+                    //                                         .getTempManifestFile(
+                    //                                                 PlaylistHostActivity.this)
+                    //                                         .getAbsolutePath());
+                    //                     } catch (Exception ex) {
+                    //                         ex.printStackTrace();
+                    //                     }
+                    //                 }
 
-                                    @Override
-                                    public void onDataCompleted() {
-                                        // Log.e("data_source", "onDataCompleted : "+manifestUrl);
-                                        try {
-                                            List<Segment> segments =
-                                                    HLSParsingUtil.getContentSegments(
-                                                            MediaUtils
-                                                                    .getTempManifestFile(
-                                                                            PlaylistHostActivity
-                                                                                    .this)
-                                                                    .getAbsolutePath(),
-                                                            manifestUrl);
-                                            for (Segment segment : segments) {
-                                                // Log.e("data_source",
-                                                //         "segment.url : " +
-                                                //         UriUtil.resolve(manifestUrl,
-                                                //         segment.url));
-                                                segmentsQueue.add(segment);
-                                            }
-                                            mPlaylistService.clearObserverForStreaming();
-                                            Segment segment = segmentsQueue.poll();
-                                            if (segment != null) {
-                                                downalodHLSFile(manifestUrl, segment);
-                                            }
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace();
-                                        }
-                                    }
+                    //                 @Override
+                    //                 public void onDataCompleted() {
+                    //                     // Log.e("data_source", "onDataCompleted :
+                    //                     "+manifestUrl); try {
+                    //                         List<Segment> segments =
+                    //                                 HLSParsingUtil.getContentSegments(
+                    //                                         MediaUtils
+                    //                                                 .getTempManifestFile(
+                    //                                                         PlaylistHostActivity
+                    //                                                                 .this)
+                    //                                                 .getAbsolutePath(),
+                    //                                         manifestUrl);
+                    //                         for (Segment segment : segments) {
+                    //                             // Log.e("data_source",
+                    //                             //         "segment.url : " +
+                    //                             //         UriUtil.resolve(manifestUrl,
+                    //                             //         segment.url));
+                    //                             segmentsQueue.add(segment);
+                    //                         }
+                    //                         mPlaylistService.clearObserverForStreaming();
+                    //                         Segment segment = segmentsQueue.poll();
+                    //                         if (segment != null) {
+                    //                             downalodHLSFile(manifestUrl, segment);
+                    //                         }
+                    //                     } catch (Exception ex) {
+                    //                         ex.printStackTrace();
+                    //                     }
+                    //                 }
 
-                                    @Override
-                                    public void close() {}
+                    //                 @Override
+                    //                 public void close() {}
 
-                                    @Override
-                                    public void onConnectionError(MojoException e) {}
-                                };
+                    //                 @Override
+                    //                 public void onConnectionError(MojoException e) {}
+                    //             };
 
-                        mPlaylistService.addObserverForStreaming(playlistStreamingObserverImpl);
-                    }
+                    //     mPlaylistService.addObserverForStreaming(playlistStreamingObserverImpl);
+                    // }
 
                     // } else {
                     //     if (mPlaylistService != null) {
