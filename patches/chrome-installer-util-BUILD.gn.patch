@@ -14,7 +14,7 @@ index 1d6f10c9c34df0a976e98d6b553acf863fb3c4f6..4b8455611a6097cc44855846df141e81
    output_file_name_base = "installer_util_strings"
  
    branding = branding_path_product
-+  sources = [ "//chrome/app/brave_strings.grd" ]
++  sources = [ "//chrome/app/brave_strings.grd" ] import("//brave/installer/util/sources.gni") extractor_datafile = brave_installer_util_generate_strings_extractor_datafile
  }
  
  # Compile the generated .rc file.
