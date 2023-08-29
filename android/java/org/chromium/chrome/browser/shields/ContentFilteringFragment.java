@@ -43,7 +43,7 @@ public class ContentFilteringFragment extends BravePreferenceFragment
     private ContentFilteringAdapter mAdapter;
     private FilterListAndroidHandler mFilterListAndroidHandler;
     private ArrayList<SubscriptionInfo> mCustomFilterLists;
-    private Value mDefaultFilterLists[];
+    private Value mFilterLists[];
     private MenuItem mEditItem;
     private MenuItem mDoneItem;
     private boolean mIsMenuLoaded;
@@ -89,7 +89,7 @@ public class ContentFilteringFragment extends BravePreferenceFragment
         mAdapter = new ContentFilteringAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mAdapter);
         getCustomFilterLists();
-        getDefaultFilterLists();
+        getFilterLists();
     }
 
     private void getCustomFilterLists() {
@@ -105,11 +105,11 @@ public class ContentFilteringFragment extends BravePreferenceFragment
         }
     }
 
-    private void getDefaultFilterLists() {
+    private void getFilterLists() {
         if (mFilterListAndroidHandler != null) {
-            mFilterListAndroidHandler.getDefaultFilterLists(filterLists -> {
-                mDefaultFilterLists = filterLists.storage;
-                mAdapter.setDefaultFilterLists(mDefaultFilterLists);
+            mFilterListAndroidHandler.getFilterLists(filterLists -> {
+                mFilterLists = filterLists.storage;
+                mAdapter.setFilterLists(mFilterLists);
             });
         }
     }

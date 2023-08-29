@@ -54,8 +54,7 @@ void FilterListService::EnableFilter(const std::string& filterListUuid,
       filterListUuid, shouldEnableFilter);
 }
 
-void FilterListService::GetDefaultFilterLists(
-    GetDefaultFilterListsCallback callback) {
+void FilterListService::GetFilterLists(GetFilterListsCallback callback) {
   std::move(callback).Run(
       ad_block_service_->regional_service_manager()->GetRegionalLists());
 }
