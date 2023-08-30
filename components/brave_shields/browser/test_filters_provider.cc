@@ -29,12 +29,6 @@ std::string TestFiltersProvider::GetNameForDebugging() {
   return "TestFiltersProvider";
 }
 
-void TestFiltersProvider::LoadDATBuffer(
-    base::OnceCallback<void(const DATFileDataBuffer& dat_buf)> cb) {
-  auto buffer = std::vector<unsigned char>(rules_.begin(), rules_.end());
-  std::move(cb).Run(buffer);
-}
-
 void TestFiltersProvider::LoadFilterSet(
     std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
     base::OnceCallback<void()> cb) {

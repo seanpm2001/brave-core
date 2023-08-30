@@ -28,9 +28,6 @@ class TestFiltersProvider : public AdBlockFiltersProvider,
                       bool engine_is_default);
   ~TestFiltersProvider() override;
 
-  void LoadDATBuffer(
-      base::OnceCallback<void(const DATFileDataBuffer& dat_buf)> cb) override;
-
   void LoadFilterSet(std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
                      base::OnceCallback<void()>) override;
 
