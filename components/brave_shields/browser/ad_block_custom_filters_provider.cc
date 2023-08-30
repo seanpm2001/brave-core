@@ -5,6 +5,7 @@
 
 #include "brave/components/brave_shields/browser/ad_block_custom_filters_provider.h"
 
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -70,6 +71,21 @@ void AdBlockCustomFiltersProvider::LoadDATBuffer(
   // PostTask so this has an async return to match other loaders
   base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
       FROM_HERE, base::BindOnce(std::move(cb), std::move(buffer)));
+}
+
+void AdBlockCustomFiltersProvider::LoadFilterSet(
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+    base::OnceCallback<void()> cb) {
+  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+  auto custom_filters = GetCustomFilters();
+
+  auto buffer =
+      std::vector<unsigned char>(custom_filters.begin(), custom_filters.end());
+  (*filter_set)->add_filter_list(buffer);
+
+  // PostTask so this has an async return to match other loaders
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
+      FROM_HERE, base::BindOnce(std::move(cb)));
 }
 
 // The custom filters provider can provide its filters immediately after being

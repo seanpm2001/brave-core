@@ -6,6 +6,7 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_SHIELDS_BROWSER_AD_BLOCK_FILTERS_PROVIDER_H_
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_BROWSER_AD_BLOCK_FILTERS_PROVIDER_H_
 
+#include <memory>
 #include <string>
 
 #include "base/functional/callback.h"
@@ -13,6 +14,7 @@
 #include "base/observer_list.h"
 #include "base/observer_list_types.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
+#include "brave/components/brave_shields/adblock/rs/src/lib.rs.h"
 
 using brave_component_updater::DATFileDataBuffer;
 
@@ -39,6 +41,10 @@ class AdBlockFiltersProvider {
 
   virtual void LoadDATBuffer(
       base::OnceCallback<void(const DATFileDataBuffer& dat_buf)>) = 0;
+
+  virtual void LoadFilterSet(
+      std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+      base::OnceCallback<void()>) = 0;
 
   base::WeakPtr<AdBlockFiltersProvider> AsWeakPtr();
 

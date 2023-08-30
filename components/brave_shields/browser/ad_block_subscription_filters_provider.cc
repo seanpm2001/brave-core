@@ -5,9 +5,11 @@
 
 #include "brave/components/brave_shields/browser/ad_block_subscription_filters_provider.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 
+#include "base/logging.h"
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_shields/adblock/rs/src/lib.rs.h"
 #include "brave/components/brave_shields/browser/ad_block_filters_provider.h"
@@ -36,6 +38,17 @@ void AdBlockSubscriptionFiltersProvider::LoadDATBuffer(
                      weak_factory_.GetWeakPtr(), std::move(cb)));
 }
 
+void AdBlockSubscriptionFiltersProvider::LoadFilterSet(
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+    base::OnceCallback<void()> cb) {
+  base::ThreadPool::PostTaskAndReplyWithResult(
+      FROM_HERE, {base::MayBlock()},
+      base::BindOnce(&brave_component_updater::ReadDATFileData, list_file_),
+      base::BindOnce(
+          &AdBlockSubscriptionFiltersProvider::OnDATFileDataReadyForFilterSet,
+          weak_factory_.GetWeakPtr(), std::move(cb), filter_set));
+}
+
 std::string AdBlockSubscriptionFiltersProvider::GetNameForDebugging() {
   return "AdBlockSubscriptionFiltersProvider";
 }
@@ -46,6 +59,20 @@ void AdBlockSubscriptionFiltersProvider::OnDATFileDataReady(
   auto metadata = adblock::read_list_metadata(dat_buf);
   on_metadata_retrieved_.Run(metadata);
   std::move(cb).Run(dat_buf);
+}
+
+void AdBlockSubscriptionFiltersProvider::OnDATFileDataReadyForFilterSet(
+    base::OnceCallback<void()> cb,
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+    const DATFileDataBuffer& dat_buf) {
+  auto result = (*filter_set)->add_filter_list(dat_buf);
+  if (result.result_kind == adblock::ResultKind::Success) {
+    on_metadata_retrieved_.Run(result.value);
+  } else {
+    LOG(ERROR) << "Subscription list parsing failed: "
+               << result.error_message.c_str();
+  }
+  std::move(cb).Run();
 }
 
 void AdBlockSubscriptionFiltersProvider::OnListAvailable() {

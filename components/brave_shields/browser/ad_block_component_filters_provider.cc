@@ -21,6 +21,19 @@ constexpr char kListFile[] = "list.txt";
 
 namespace brave_shields {
 
+namespace {
+
+// static
+void AddDATBufferToFilterSet(
+    base::OnceCallback<void()> cb,
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+    DATFileDataBuffer buffer) {
+  (*filter_set)->add_filter_list(buffer);
+  std::move(cb).Run();
+}
+
+}  // namespace
+
 AdBlockComponentFiltersProvider::AdBlockComponentFiltersProvider(
     component_updater::ComponentUpdateService* cus,
     std::string component_id,
@@ -84,6 +97,24 @@ void AdBlockComponentFiltersProvider::LoadDATBuffer(
       FROM_HERE, {base::MayBlock()},
       base::BindOnce(&brave_component_updater::ReadDATFileData, list_file_path),
       base::BindOnce(std::move(cb)));
+}
+
+void AdBlockComponentFiltersProvider::LoadFilterSet(
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+    base::OnceCallback<void()> cb) {
+  if (component_path_.empty()) {
+    // If the path is not ready yet, run the callback with no changes. An
+    // update will be pushed later to notify about the newly available list.
+    std::move(cb).Run();
+    return;
+  }
+
+  base::FilePath list_file_path = component_path_.AppendASCII(kListFile);
+
+  base::ThreadPool::PostTaskAndReplyWithResult(
+      FROM_HERE, {base::MayBlock()},
+      base::BindOnce(&brave_component_updater::ReadDATFileData, list_file_path),
+      base::BindOnce(&AddDATBufferToFilterSet, std::move(cb), filter_set));
 }
 
 }  // namespace brave_shields

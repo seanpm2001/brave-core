@@ -6,6 +6,7 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_SHIELDS_BROWSER_TEST_FILTERS_PROVIDER_H_
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_BROWSER_TEST_FILTERS_PROVIDER_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,9 @@ class TestFiltersProvider : public AdBlockFiltersProvider,
 
   void LoadDATBuffer(
       base::OnceCallback<void(const DATFileDataBuffer& dat_buf)> cb) override;
+
+  void LoadFilterSet(std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+                     base::OnceCallback<void()>) override;
 
   void LoadResources(
       base::OnceCallback<void(const std::string& resources_json)> cb) override;

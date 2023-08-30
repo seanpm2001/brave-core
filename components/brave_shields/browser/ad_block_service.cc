@@ -56,16 +56,17 @@ AdBlockService::SourceProviderObserver::~SourceProviderObserver() {
 }
 
 void AdBlockService::SourceProviderObserver::OnChanged() {
+  auto filter_set = std::make_shared<rust::Box<adblock::FilterSet>>(
+      adblock::new_filter_set());
+  auto on_loaded_cb =
+      base::BindOnce(&AdBlockService::SourceProviderObserver::OnFilterSetLoaded,
+                     weak_factory_.GetWeakPtr(), filter_set);
   if (is_filter_provider_manager_) {
     static_cast<AdBlockFiltersProviderManager*>(filters_provider_.get())
-        ->LoadDATBufferForEngine(
-            adblock_engine_->IsDefaultEngine(),
-            base::BindOnce(&AdBlockService::SourceProviderObserver::OnDATLoaded,
-                           weak_factory_.GetWeakPtr()));
+        ->LoadFilterSetForEngine(adblock_engine_->IsDefaultEngine(), filter_set,
+                                 std::move(on_loaded_cb));
   } else {
-    filters_provider_->LoadDATBuffer(
-        base::BindOnce(&AdBlockService::SourceProviderObserver::OnDATLoaded,
-                       weak_factory_.GetWeakPtr()));
+    filters_provider_->LoadFilterSet(filter_set, std::move(on_loaded_cb));
   }
 }
 
@@ -78,25 +79,33 @@ void AdBlockService::SourceProviderObserver::OnDATLoaded(
       &SourceProviderObserver::OnResourcesLoaded, weak_factory_.GetWeakPtr()));
 }
 
+void AdBlockService::SourceProviderObserver::OnFilterSetLoaded(
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set) {
+  filter_set_ = absl::make_optional(std::move(*filter_set));
+  // multiple AddObserver calls are ignored
+  resource_provider_->AddObserver(this);
+  resource_provider_->LoadResources(base::BindOnce(
+      &SourceProviderObserver::OnResourcesLoaded, weak_factory_.GetWeakPtr()));
+}
+
 void AdBlockService::SourceProviderObserver::OnResourcesLoaded(
     const std::string& resources_json) {
-  if (!dat_buf_) {
+  if (!filter_set_) {
     task_runner_->PostTask(
         FROM_HERE,
         base::BindOnce(&AdBlockEngine::UseResources,
                        adblock_engine_->AsWeakPtr(), resources_json));
   } else {
     auto engine_load_callback = base::BindOnce(
-        [](base::WeakPtr<AdBlockEngine> engine, DATFileDataBuffer dat_buf,
+        [](base::WeakPtr<AdBlockEngine> engine,
+           rust::Box<adblock::FilterSet> filter_set,
            const std::string& resources_json) {
-          auto filter_set = adblock::new_filter_set();
-          filter_set->add_filter_list(dat_buf);
           if (engine) {
             engine->Load(std::move(filter_set), resources_json);
           }
         },
-        adblock_engine_->AsWeakPtr(), *std::move(dat_buf_), resources_json);
-    dat_buf_.reset();
+        adblock_engine_->AsWeakPtr(), *std::move(filter_set_), resources_json);
+    filter_set_.reset();
     task_runner_->PostTask(FROM_HERE, std::move(engine_load_callback));
   }
 }

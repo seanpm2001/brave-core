@@ -5,6 +5,7 @@
 
 #include "brave/components/brave_shields/browser/test_filters_provider.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -32,6 +33,14 @@ void TestFiltersProvider::LoadDATBuffer(
     base::OnceCallback<void(const DATFileDataBuffer& dat_buf)> cb) {
   auto buffer = std::vector<unsigned char>(rules_.begin(), rules_.end());
   std::move(cb).Run(buffer);
+}
+
+void TestFiltersProvider::LoadFilterSet(
+    std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
+    base::OnceCallback<void()> cb) {
+  auto buffer = std::vector<unsigned char>(rules_.begin(), rules_.end());
+  (*filter_set)->add_filter_list(buffer);
+  std::move(cb).Run();
 }
 
 void TestFiltersProvider::LoadResources(
