@@ -5,7 +5,6 @@
 
 #include "base/base64url.h"
 #include "base/memory/raw_ptr.h"
-#include "base/path_service.h"
 #include "base/scoped_observation.h"
 #include "base/strings/stringprintf.h"
 #include "base/test/scoped_feature_list.h"
@@ -13,11 +12,9 @@
 #include "brave/browser/brave_browser_process.h"
 #include "brave/browser/brave_content_browser_client.h"
 #include "brave/browser/extensions/brave_base_local_data_files_browsertest.h"
-#include "brave/components/brave_shields/browser/ad_block_component_filters_provider.h"
 #include "brave/components/brave_shields/browser/ad_block_service.h"
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/brave_shields/browser/test_filters_provider.h"
-#include "brave/components/constants/brave_paths.h"
 #include "brave/components/debounce/browser/debounce_component_installer.h"
 #include "brave/components/debounce/common/features.h"
 #include "brave/components/debounce/common/pref_names.h"
@@ -25,14 +22,11 @@
 #include "chrome/browser/interstitials/security_interstitial_page_test_utils.h"
 #include "chrome/test/base/in_process_browser_test.h"
 #include "chrome/test/base/ui_test_utils.h"
-#include "components/network_session_configurator/common/network_switches.h"
 #include "content/public/common/content_client.h"
 #include "content/public/test/browser_test.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/test_utils.h"
 #include "net/base/url_util.h"
-#include "net/dns/mock_host_resolver.h"
-#include "net/test/embedded_test_server/default_handlers.h"
 #include "third_party/blink/public/common/loader/url_loader_throttle.h"
 
 namespace {
@@ -181,18 +175,6 @@ class DebounceBrowserTest : public BaseLocalDataFilesBrowserTest {
   }
 
   bool InstallAdBlockForDebounce() {
-    base::FilePath test_data_dir;
-    GetTestDataDir(&test_data_dir);
-    const extensions::Extension* ad_block_extension =
-        InstallExtension(test_data_dir.AppendASCII("adblock-data")
-                             .AppendASCII("adblock-default"),
-                         1);
-    if (!ad_block_extension) {
-      return false;
-    }
-    g_brave_browser_process->ad_block_service()
-        ->default_filters_provider()
-        ->OnComponentReady(ad_block_extension->path());
     auto source_provider = std::make_unique<brave_shields::TestFiltersProvider>(
         "||blocked.com^", "[]");
     g_brave_browser_process->ad_block_service()->UseSourceProvidersForTest(
