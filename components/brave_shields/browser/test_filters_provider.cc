@@ -18,10 +18,12 @@ TestFiltersProvider::TestFiltersProvider(const std::string& rules,
     : AdBlockFiltersProvider(true), rules_(rules), resources_(resources) {}
 TestFiltersProvider::TestFiltersProvider(const std::string& rules,
                                          const std::string& resources,
-                                         bool engine_is_default)
+                                         bool engine_is_default,
+                                         uint8_t permission_mask)
     : AdBlockFiltersProvider(engine_is_default),
       rules_(rules),
-      resources_(resources) {}
+      resources_(resources),
+      permission_mask_(permission_mask) {}
 
 TestFiltersProvider::~TestFiltersProvider() = default;
 
@@ -33,7 +35,7 @@ void TestFiltersProvider::LoadFilterSet(
     std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
     base::OnceCallback<void()> cb) {
   auto buffer = std::vector<unsigned char>(rules_.begin(), rules_.end());
-  (*filter_set)->add_filter_list(buffer);
+  (*filter_set)->add_filter_list_with_permissions(buffer, permission_mask_);
   std::move(cb).Run();
 }
 

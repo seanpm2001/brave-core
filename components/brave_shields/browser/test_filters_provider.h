@@ -25,7 +25,8 @@ class TestFiltersProvider : public AdBlockFiltersProvider,
   TestFiltersProvider(const std::string& rules, const std::string& resources);
   TestFiltersProvider(const std::string& rules,
                       const std::string& resources,
-                      bool engine_is_default);
+                      bool engine_is_default,
+                      uint8_t permission_mask = 0);
   ~TestFiltersProvider() override;
 
   void LoadFilterSet(std::shared_ptr<rust::Box<adblock::FilterSet>> filter_set,
@@ -39,6 +40,7 @@ class TestFiltersProvider : public AdBlockFiltersProvider,
  private:
   std::string rules_;
   std::string resources_;
+  uint8_t permission_mask_;
 };
 
 }  // namespace brave_shields
