@@ -18,7 +18,10 @@ absl::optional<int> GetBraveLayoutConstant(LayoutConstant constant) {
   //     ui::MaterialDesignController::IsNewerMaterialUi();
   switch (constant) {
     case TAB_HEIGHT: {
-      return (touch ? 41 : 30) + GetLayoutConstant(TABSTRIP_TOOLBAR_OVERLAP);
+      return (touch ? 41 : 36);
+    }
+    case TABSTRIP_TOOLBAR_OVERLAP: {
+      return 0;
     }
     case TAB_SEPARATOR_HEIGHT: {
       return 24;

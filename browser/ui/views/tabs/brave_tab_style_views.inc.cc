@@ -21,9 +21,6 @@ class BraveGM2TabStyle : public GM2TabStyleViews {
  protected:
   TabStyle::TabColors CalculateTargetColors() const override;
 
-  Tab* tab() { return base::to_address(tab_); }
-  const Tab* tab() const { return base::to_address(tab_); }
-
  private:
   raw_ptr<Tab> tab_;
 };
@@ -63,12 +60,13 @@ class BraveVerticalTabStyle : public BraveGM2TabStyle {
                  bool force_active = false,
                  TabStyle::RenderUnits render_units =
                      TabStyle::RenderUnits::kPixels) const override;
+  int GetStrokeThickness(bool should_paint_as_active = false) const override;
   TabStyle::SeparatorBounds GetSeparatorBounds(float scale) const override;
+  float GetSeparatorOpacity(bool for_layout, bool leading) const override;
   void PaintTab(gfx::Canvas* canvas) const override;
 
  private:
   bool ShouldShowVerticalTabs() const;
-  bool IsInGroupAndNotActive() const;
   SkColor GetTargetTabBackgroundColor(
       TabStyle::TabSelectionState selection_state,
       bool hovered) const override;
@@ -84,16 +82,19 @@ SkPath BraveVerticalTabStyle::GetPath(
     float scale,
     bool force_active,
     TabStyle::RenderUnits render_units) const {
-  if (!ShouldShowVerticalTabs()) {
-    return BraveGM2TabStyle::GetPath(path_type, scale, force_active,
-                                     render_units);
-  }
-
   const int stroke_thickness = GetStrokeThickness();
   gfx::RectF aligned_bounds =
       ScaleAndAlignBounds(tab()->bounds(), scale, stroke_thickness);
   if (tab()->bounds().IsEmpty() || aligned_bounds.IsEmpty()) {
     return {};
+  }
+
+  // Horizontal tabs should have a gap between them. Create a visual gap by
+  // inseting the bounds of the tab by half the required gap on either side
+  // before drawing the rectangle.
+  if (!ShouldShowVerticalTabs()) {
+    float horizontal_inset = brave_tabs::kHorizontalTabGap / 2 * scale;
+    aligned_bounds.Inset(gfx::InsetsF::VH(0, horizontal_inset));
   }
 
 #if DCHECK_IS_ON()
@@ -154,21 +155,100 @@ SkPath BraveVerticalTabStyle::GetPath(
   return path;
 }
 
+int BraveVerticalTabStyle::GetStrokeThickness(
+    bool should_paint_as_active) const {
+  if (ShouldShowVerticalTabs()) {
+    return BraveGM2TabStyle::GetStrokeThickness(should_paint_as_active);
+  }
+  // Only pinned tabs are given a stroke in horizontal mode.
+  return tab()->data().pinned ? 1 : 0;
+}
+
 TabStyle::SeparatorBounds BraveVerticalTabStyle::GetSeparatorBounds(
     float scale) const {
   if (ShouldShowVerticalTabs()) {
     return {};
   }
 
-  return BraveGM2TabStyle::GetSeparatorBounds(scale);
+  gfx::SizeF size(tab_style()->GetSeparatorSize());
+  size.Scale(scale);
+  const gfx::RectF aligned_bounds =
+      ScaleAndAlignBounds(tab()->bounds(), scale, GetStrokeThickness());
+
+  // Note: `leading` bounds are used for rect corner radius calculation and so
+  // must be non-empty, even if we don't want to show it.
+  // TODO(zenparsing): Separators are currently at the edges of the tab view,
+  // inside of the visual boundaries. Is there where we want the separators to
+  // be?
+  TabStyle::SeparatorBounds bounds;
+  bounds.leading = gfx::RectF(aligned_bounds.right(),
+                              (aligned_bounds.height() - size.height()) / 2,
+                              size.width(), size.height());
+  bounds.trailing = bounds.leading;
+  bounds.trailing.set_x(aligned_bounds.right() - size.width());
+
+  gfx::PointF origin(tab()->bounds().origin());
+  origin.Scale(scale);
+  bounds.trailing.Offset(-origin.x(), -origin.y());
+
+  return bounds;
+}
+
+float BraveVerticalTabStyle::GetSeparatorOpacity(bool for_layout,
+                                                 bool leading) const {
+  if (ShouldShowVerticalTabs()) {
+    return BraveGM2TabStyle::GetSeparatorOpacity(for_layout, leading);
+  }
+
+  if (leading) {
+    return 0;
+  }
+
+  if (tab()->data().pinned) {
+    return 0;
+  }
+
+  const auto has_visible_background = [](const Tab* const tab) {
+    return tab->IsActive() || tab->IsSelected() || tab->IsMouseHovered();
+  };
+
+  if (has_visible_background(tab())) {
+    return 0;
+  }
+
+  const Tab* const next_tab = tab()->controller()->GetAdjacentTab(tab(), 1);
+
+  const float visible_opacity =
+      GetHoverInterpolatedSeparatorOpacity(for_layout, next_tab);
+
+  // Show separator if this is the last tab (and is therefore followed by the
+  // new tab icon).
+  if (!next_tab) {
+    return visible_opacity;
+  }
+
+  // Show separator if there is a group header between this tab and the next.
+  if (next_tab->group().has_value() && tab()->group() != next_tab->group()) {
+    return visible_opacity;
+  }
+
+  if (has_visible_background(next_tab)) {
+    return 0;
+  }
+
+  return visible_opacity;
 }
 
 void BraveVerticalTabStyle::PaintTab(gfx::Canvas* canvas) const {
   BraveGM2TabStyle::PaintTab(canvas);
+  /*
   if (!ShouldShowVerticalTabs()) {
     return;
   }
+  */
 
+  // TODO(zenparsing): Wondering if we can get rid of this, now or later.
+  /*
   if (tab()->data().pinned) {
     const auto* widget = tab()->GetWidget();
     CHECK(widget);
@@ -177,6 +257,7 @@ void BraveVerticalTabStyle::PaintTab(gfx::Canvas* canvas) const {
     PaintBackgroundStroke(canvas, TabStyle::TabSelectionState::kActive,
                           tab_stroke_color);
   }
+  */
 }
 
 SkColor BraveVerticalTabStyle::GetTargetTabBackgroundColor(

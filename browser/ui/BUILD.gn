@@ -348,6 +348,8 @@ source_set("ui") {
       "views/tabs/brave_tab_group_header.h",
       "views/tabs/brave_tab_group_highlight.cc",
       "views/tabs/brave_tab_group_highlight.h",
+      "views/tabs/brave_tab_group_style.cc",
+      "views/tabs/brave_tab_group_style.h",
       "views/tabs/brave_tab_group_underline.cc",
       "views/tabs/brave_tab_group_underline.h",
       "views/tabs/brave_tab_hover_card_controller.cc",

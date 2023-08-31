@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "base/check_is_test.h"
+#include "brave/browser/ui/tabs/brave_tab_layout_constants.h"
 #include "brave/browser/ui/tabs/brave_tab_prefs.h"
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/browser/ui/views/tabs/brave_tab_group_header.h"
@@ -23,6 +24,17 @@
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/gfx/canvas.h"
 #include "ui/views/view_utils.h"
+
+namespace {
+
+gfx::Size AddTabStripBottomSpacing(gfx::Size size) {
+  // Allow for a 4px spacing between the bottom of tabs and the view below (i.e.
+  // the toolbar). Tab group underlines will partially occupy this space.
+  size.Enlarge(0, brave_tabs::kHorizontalTabStripBottomSpacing);
+  return size;
+}
+
+}  // namespace
 
 BraveTabContainer::BraveTabContainer(
     TabContainerController& controller,
@@ -91,7 +103,13 @@ base::OnceClosure BraveTabContainer::LockLayout() {
                         base::Unretained(this));
 }
 
+gfx::Size BraveTabContainer::GetMinimumSize() const {
+  return AddTabStripBottomSpacing(TabContainerImpl::GetMinimumSize());
+}
+
 gfx::Size BraveTabContainer::CalculatePreferredSize() const {
+  // TODO(zenparsing): All of these vertical tabs feature checks need to not
+  // interfere with horizontal tab customizations.
   if (!base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs))
     return TabContainerImpl::CalculatePreferredSize();
 
@@ -102,7 +120,7 @@ gfx::Size BraveTabContainer::CalculatePreferredSize() const {
 
   if (!tabs::utils::ShouldShowVerticalTabs(
           tab_slot_controller_->GetBrowser())) {
-    return TabContainerImpl::CalculatePreferredSize();
+    return AddTabStripBottomSpacing(TabContainerImpl::CalculatePreferredSize());
   }
 
   const int tab_count = tabs_view_model_.view_size();

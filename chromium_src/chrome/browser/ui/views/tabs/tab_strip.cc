@@ -45,10 +45,13 @@
     continue;                                                                \
   }
 
-#define BRAVE_TAB_DRAG_CONTEXT_IMPL_CALCULATE_BOUNDS_FOR_DRAGGED_VIEWS      \
-  if (base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs) &&   \
-      tabs::utils::ShouldShowVerticalTabs(tab_strip_->GetBrowser())) {      \
-    return tabs::CalculateBoundsForVerticalDraggedViews(views, tab_strip_); \
+#define BRAVE_TAB_DRAG_CONTEXT_IMPL_CALCULATE_BOUNDS_FOR_DRAGGED_VIEWS       \
+  if (base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs)) {    \
+    return tabs::utils::ShouldShowVerticalTabs(tab_strip_->GetBrowser())     \
+               ? tabs::CalculateBoundsForVerticalDraggedViews(views,         \
+                                                              tab_strip_)    \
+               : tabs::CalculateBoundsForHorizontalDraggedViews(views,       \
+                                                                tab_strip_); \
   }
 
 #define BRAVE_TAB_DRAG_CONTEXT_IMPL_PAINT_CHILDREN                        \

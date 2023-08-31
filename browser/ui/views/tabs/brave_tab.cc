@@ -158,16 +158,8 @@ void BraveTab::ActiveStateChanged() {
 }
 
 absl::optional<SkColor> BraveTab::GetGroupColor() const {
-  if (!base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs)) {
-    return Tab::GetGroupColor();
-  }
-
-  // Hide tab border with group color as it doesn't go well with vertical tabs.
-  if (tabs::utils::ShouldShowVerticalTabs(controller()->GetBrowser())) {
-    return {};
-  }
-
-  return Tab::GetGroupColor();
+  // Unlike upstream, tabs that are within a group are not given a border color.
+  return {};
 }
 
 void BraveTab::UpdateIconVisibility() {

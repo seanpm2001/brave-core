@@ -6,6 +6,7 @@
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/browser/ui/views/tabs/brave_tab_group_header.h"
 #include "brave/browser/ui/views/tabs/brave_tab_group_highlight.h"
+#include "brave/browser/ui/views/tabs/brave_tab_group_style.h"
 #include "brave/browser/ui/views/tabs/brave_tab_group_underline.h"
 #include "brave/browser/ui/views/tabs/vertical_tab_utils.h"
 #include "chrome/browser/ui/views/tabs/tab_group_style.h"
@@ -14,6 +15,12 @@
 #define TabGroupHeader BraveTabGroupHeader
 #define TabGroupUnderline BraveTabGroupUnderline
 #define TabGroupHighlight BraveTabGroupHighlight
+
+// `style_` is a private member of `TabGroupViews` initialized in the
+// constructor. In order to use our own subclass, we immediately overwrite the
+// instance created by Chromium.
+#define BRAVE_TAB_GROUP_VIEWS_TAB_GROUP_VIEWS \
+  style_ = std::make_unique<BraveTabGroupStyle>(*this);
 
 // TabGroupViews destructor is not virtual, so we can't override the method.
 #define BRAVE_TAB_GROUP_VIEWS_GET_LEADING_TRAILING_GROUP_VIEWS                 \
@@ -41,6 +48,7 @@
 #include "src/chrome/browser/ui/views/tabs/tab_group_views.cc"
 
 #undef BRAVE_TAB_GROUP_VIEWS_GET_LEADING_TRAILING_GROUP_VIEWS
+#undef BRAVE_TAB_GROUP_VIEWS_TAB_GROUP_VIEWS
 #undef TabGroupHighlight
 #undef TabGroupUnderline
 #undef TabGroupHeader

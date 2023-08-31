@@ -7,6 +7,7 @@
 
 #include <algorithm>
 
+#include "brave/browser/ui/tabs/brave_tab_layout_constants.h"
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/browser/ui/views/tabs/brave_tab_group_header.h"
 #include "brave/browser/ui/views/tabs/vertical_tab_utils.h"
@@ -15,6 +16,7 @@
 #include "chrome/browser/ui/views/tabs/tab_group_views.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/skia_conversions.h"
+#include "ui/views/view_utils.h"
 
 BraveTabGroupUnderline::BraveTabGroupUnderline(
     TabGroupViews* tab_group_views,
@@ -45,10 +47,15 @@ void BraveTabGroupUnderline::UpdateBounds(const views::View* leading_view,
 
 gfx::Insets BraveTabGroupUnderline::GetInsetsForUnderline(
     const views::View* sibling_view) const {
-  if (!ShouldShowVerticalTabs())
-    return TabGroupUnderline::GetInsetsForUnderline(sibling_view);
+  if (ShouldShowVerticalTabs()) {
+    return {};
+  }
 
-  return {};
+  int horizontal_inset = TabGroupUnderline::kStrokeThickness +
+                         brave_tabs::kHorizontalTabInset +
+                         brave_tabs::kHorizontalGroupUnderlineInset;
+
+  return gfx::Insets::VH(0, horizontal_inset);
 }
 
 gfx::Rect BraveTabGroupUnderline::CalculateTabGroupUnderlineBounds(
@@ -56,8 +63,11 @@ gfx::Rect BraveTabGroupUnderline::CalculateTabGroupUnderlineBounds(
     const views::View* const leading_view,
     const views::View* const trailing_view) const {
   if (!ShouldShowVerticalTabs()) {
-    return TabGroupUnderline::CalculateTabGroupUnderlineBounds(
+    auto bounds = TabGroupUnderline::CalculateTabGroupUnderlineBounds(
         underline_view, leading_view, trailing_view);
+    // Push the underline down to the bottom of the tab strip.
+    bounds.Offset(0, brave_tabs::kHorizontalTabStripBottomSpacing);
+    return bounds;
   }
 
   // override bounds for vertical tabs mode.

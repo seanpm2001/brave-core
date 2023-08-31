@@ -26,12 +26,15 @@ struct TabLayoutConstants;
 
 namespace tabs {
 
+// TODO(zenparsing): Some of these could come from TabStyle.
+// TODO(zenparsing): Move these to TabStyle?
 constexpr int kVerticalTabHeight = 36;
 constexpr int kVerticalTabMinWidth = kVerticalTabHeight;
 constexpr int kVerticalTabsSpacing = 4;
 constexpr int kMarginForVerticalTabContainers = kVerticalTabsSpacing;
 
-constexpr int kUnpinnedTabBorderRadius = 4;
+// TODO(zenparsing): OK to change vertical tab radius to 8px as well?
+constexpr int kUnpinnedTabBorderRadius = 8;
 constexpr int kPinnedTabBorderRadius = 8;
 
 std::vector<gfx::Rect> CalculateVerticalTabBounds(
@@ -39,6 +42,10 @@ std::vector<gfx::Rect> CalculateVerticalTabBounds(
     const std::vector<TabWidthConstraints>& tabs,
     absl::optional<int> width,
     bool is_floating_mode);
+
+std::vector<gfx::Rect> CalculateBoundsForHorizontalDraggedViews(
+    const std::vector<TabSlotView*>& views,
+    TabStrip* tab_strip);
 
 std::vector<gfx::Rect> CalculateBoundsForVerticalDraggedViews(
     const std::vector<TabSlotView*>& views,

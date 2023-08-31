@@ -21,12 +21,8 @@
 
 namespace {
 
-SkColor GetGroupBackgroundColorForVerticalTabs(
-    const tab_groups::TabGroupId& group_id,
-    TabSlotController* controller) {
-  DCHECK(base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs))
-      << "This should be called only when the flag is on.";
-
+SkColor GetGroupBackgroundColor(const tab_groups::TabGroupId& group_id,
+                                TabSlotController* controller) {
   if (!controller->GetBrowser()
            ->tab_strip_model()
            ->group_model()
@@ -64,11 +60,8 @@ void BraveTabGroupHeader::AddedToWidget() {
 
 void BraveTabGroupHeader::VisualsChanged() {
   TabGroupHeader::VisualsChanged();
-  if (!ShouldShowVerticalTabs()) {
-    return;
-  }
 
-  title_->SetEnabledColor(GetGroupBackgroundColorForVerticalTabs(
+  title_->SetEnabledColor(GetGroupBackgroundColor(
       group().value(), base::to_address(tab_slot_controller_)));
   title_->SetSubpixelRenderingEnabled(false);
 
@@ -79,18 +72,21 @@ void BraveTabGroupHeader::VisualsChanged() {
   // We don't draw background for vertical tabs.
   title_chip_->SetBackground(nullptr);
 
-  LayoutTitleChip();
+  if (ShouldShowVerticalTabs()) {
+    LayoutTitleChipForVerticalTabs();
+  }
 }
 
 void BraveTabGroupHeader::Layout() {
   TabGroupHeader::Layout();
-  if (!ShouldShowVerticalTabs()) {
-    return;
+  if (ShouldShowVerticalTabs()) {
+    LayoutTitleChipForVerticalTabs();
   }
-
-  LayoutTitleChip();
 }
 
+// TODO(zenparsing): This dual check is *always* what we want to do, and what we
+// need for horizontal tab customizations. Can we move the feature check into
+// `tabs::utils::ShouldShowVerticalTabs`?
 bool BraveTabGroupHeader::ShouldShowVerticalTabs() const {
   if (!base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs)) {
     return false;
@@ -100,7 +96,7 @@ bool BraveTabGroupHeader::ShouldShowVerticalTabs() const {
       tab_slot_controller_->GetBrowser());
 }
 
-void BraveTabGroupHeader::LayoutTitleChip() {
+void BraveTabGroupHeader::LayoutTitleChipForVerticalTabs() {
   DCHECK(base::FeatureList::IsEnabled(tabs::features::kBraveVerticalTabs))
       << "This should be called only when the flag is on.";
 

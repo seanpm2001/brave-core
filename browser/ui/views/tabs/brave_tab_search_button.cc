@@ -18,18 +18,27 @@
 #include "ui/gfx/geometry/rect.h"
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/geometry/skia_conversions.h"
+#include "ui/views/controls/highlight_path_generator.h"
 #include "ui/views/layout/layout_provider.h"
 
 BraveTabSearchButton::BraveTabSearchButton(TabStrip* tab_strip)
     : TabSearchButton(tab_strip) {
   tab_search_bubble_host_ = std::make_unique<BraveTabSearchBubbleHost>(
       this, tab_strip->controller()->GetProfile());
+  // `TabStripControlButton` installs a highlight generator that has the wrong
+  // dimensions and results in a highlight that is too small.
+  views::HighlightPathGenerator::Install(this, {});
 }
 
 BraveTabSearchButton::~BraveTabSearchButton() = default;
 
 gfx::Size BraveTabSearchButton::CalculatePreferredSize() const {
   return BraveNewTabButton::kButtonSize;
+}
+
+void BraveTabSearchButton::SetBorder(std::unique_ptr<views::Border> border) {
+  // No-op. `TabStripRegionView` attempts to set a border on this view which
+  // interferes with the size of the button.
 }
 
 void BraveTabSearchButton::SetBubbleArrow(views::BubbleBorder::Arrow arrow) {
