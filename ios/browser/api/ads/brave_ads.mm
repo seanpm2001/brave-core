@@ -5,9 +5,6 @@
 
 #import <Network/Network.h>
 #import <UIKit/UIKit.h>
-#include "brave/components/brave_ads/core/mojom/brave_ads.mojom.h"
-#include "brave/components/brave_ads/core/public/history/ad_content_value_util.h"
-#include "brave/components/brave_news/common/pref_names.h"
 
 #import "ads_client_bridge.h"
 #import "ads_client_ios.h"
@@ -24,6 +21,7 @@
 #include "base/time/time.h"
 #include "base/values.h"
 #import "brave/build/ios/mojom/cpp_transformations.h"
+#include "brave/components/brave_ads/core/mojom/brave_ads.mojom.h"
 #include "brave/components/brave_ads/core/public/ads.h"
 #include "brave/components/brave_ads/core/public/ads/ad_event/ad_event_history.h"
 #include "brave/components/brave_ads/core/public/ads/inline_content_ad_info.h"
@@ -40,7 +38,9 @@
 #include "brave/components/brave_ads/core/public/history/history_item_info.h"
 #include "brave/components/brave_ads/core/public/history/history_sort_types.h"
 #include "brave/components/brave_ads/core/public/prefs/pref_names.h"
+#include "brave/components/brave_news/common/pref_names.h"
 #include "brave/components/brave_rewards/common/rewards_flags.h"
+#include "brave/components/l10n/common/prefs.h"
 #import "brave/ios/browser/api/ads/brave_ads.mojom.objc+private.h"
 #import "brave/ios/browser/api/common/common_operations.h"
 #import "brave_ads.h"
@@ -80,6 +80,11 @@ static NSString* const kLegacyAdsSubdivisionTargetingCodePrefKey =
     @"BATAdsSubdivisionTargetingCodePrefKey";
 static NSString* const kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey =
     @"BATAutoDetectedAdsSubdivisionTargetingCodePrefKey";
+static NSString* const
+    kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey =
+        base::SysUTF8ToNSString(
+            brave_ads::prefs::
+                kLegacySubdivisionTargetingAutoDetectedSubdivision);
 
 static NSString* const kEnabledPrefKey =
     base::SysUTF8ToNSString(brave_ads::prefs::kOptedInToNotificationAds);
@@ -89,9 +94,8 @@ static NSString* const kShouldAllowSubdivisionTargetingPrefKey =
     base::SysUTF8ToNSString(brave_ads::prefs::kShouldAllowSubdivisionTargeting);
 static NSString* const kSubdivisionTargetingSubdivisionPrefKey =
     base::SysUTF8ToNSString(brave_ads::prefs::kSubdivisionTargetingSubdivision);
-static NSString* const kSubdivisionTargetingAutoDetectedSubdivisionPrefKey =
-    base::SysUTF8ToNSString(
-        brave_ads::prefs::kSubdivisionTargetingAutoDetectedSubdivision);
+static NSString* const kGeoSubdivisionPrefKey =
+    base::SysUTF8ToNSString(brave_l10n::prefs::kGeoSubdivision);
 static NSString* const kAdsResourceMetadataPrefKey = @"BATAdsResourceMetadata";
 static NSString* const kBraveNewsOptedInPrefKey =
     base::SysUTF8ToNSString(brave_news::prefs::kBraveNewsOptedIn);
@@ -407,16 +411,13 @@ brave_ads::mojom::DBCommandResponseInfoPtr RunDBTransactionOnTaskRunner(
 }
 
 - (NSString*)autoDetectedSubdivisionTargetingCode {
-  return (NSString*)
-                 self.prefs[kSubdivisionTargetingAutoDetectedSubdivisionPrefKey]
-             ?: @"";
+  return (NSString*)self.prefs[kGeoSubdivisionPrefKey] ?: @"";
 }
 
 - (void)setAutoDetectedSubdivisionTargetingCode:
     (NSString*)autoDetectedSubdivisionTargetingCode {
-  self.prefs[kSubdivisionTargetingAutoDetectedSubdivisionPrefKey] =
-      autoDetectedSubdivisionTargetingCode;
-  [self savePref:kSubdivisionTargetingAutoDetectedSubdivisionPrefKey];
+  self.prefs[kGeoSubdivisionPrefKey] = autoDetectedSubdivisionTargetingCode;
+  [self savePref:kGeoSubdivisionPrefKey];
 }
 
 - (void)savePref:(NSString*)name {
@@ -466,11 +467,20 @@ brave_ads::mojom::DBCommandResponseInfoPtr RunDBTransactionOnTaskRunner(
   }
 
   if ([self.prefs
-          objectForKey:kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey]) {
-    self.prefs[kSubdivisionTargetingAutoDetectedSubdivisionPrefKey] =
-        self.prefs[kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+          objectForKey:
+              kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey]) {
+    self.prefs[kGeoSubdivisionPrefKey] =
+        self.prefs[kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey];
     [self.prefs removeObjectForKey:
-                    kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+                    kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey];
+  }
+
+  if ([self.prefs
+          objectForKey:kAutoDetectedAdsSubdivisionTargetingCodePrefKey]) {
+    self.prefs[kGeoSubdivisionPrefKey] =
+        self.prefs[kAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+    [self.prefs
+        removeObjectForKey:kAutoDetectedAdsSubdivisionTargetingCodePrefKey];
   }
 
   [self savePrefs];

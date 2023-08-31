@@ -13,6 +13,7 @@
 #include "brave/components/brave_ads/core/public/prefs/pref_names.h"
 #include "brave/components/brave_news/common/pref_names.h"
 #include "brave/components/brave_rewards/common/pref_names.h"
+#include "brave/components/l10n/common/prefs.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace brave_ads {
@@ -31,14 +32,6 @@ Subdivision::Subdivision() {
 
 Subdivision::~Subdivision() {
   AdsClientHelper::RemoveObserver(this);
-}
-
-void Subdivision::AddObserver(SubdivisionObserver* observer) {
-  observers_.AddObserver(observer);
-}
-
-void Subdivision::RemoveObserver(SubdivisionObserver* observer) {
-  observers_.RemoveObserver(observer);
 }
 
 absl::optional<std::string> Subdivision::GetSubdivision() const {
@@ -108,12 +101,8 @@ void Subdivision::OnDidFetchSubdivision(const std::string& subdivision) {
 
   subdivision_ = subdivision;
 
-  for (auto& observer : observers_) {
-    observer.OnDidUpdateSubdivision(*subdivision_);
-  }
-
-  //  AdsClientHelper::GetInstance()->UpdateSubdivision(*region,
-  //  *subdivision_code);
+  AdsClientHelper::GetInstance()->SetLocalStatePref(
+      brave_l10n::prefs::kGeoSubdivision, base::Value(subdivision));
 }
 
 }  // namespace brave_ads

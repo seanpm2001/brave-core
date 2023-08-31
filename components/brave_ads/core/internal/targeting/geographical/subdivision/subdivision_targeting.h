@@ -9,14 +9,12 @@
 #include <memory>
 #include <string>
 
-#include "brave/components/brave_ads/core/internal/geographical/subdivision/subdivision_observer.h"
 #include "brave/components/brave_ads/core/public/client/ads_client_notifier_observer.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace brave_ads {
 
-class SubdivisionTargeting final : public AdsClientNotifierObserver,
-                                   public SubdivisionObserver {
+class SubdivisionTargeting final : public AdsClientNotifierObserver {
  public:
   SubdivisionTargeting();
 
@@ -52,7 +50,6 @@ class SubdivisionTargeting final : public AdsClientNotifierObserver,
 
   void MaybeAllowAndFetchSubdivisionForLocale(const std::string& locale);
 
-  void SetAutoDetectedSubdivision(const std::string& subdivision);
   void UpdateAutoDetectedSubdivision();
   const std::string& GetLazyAutoDetectedSubdivision() const;
 
@@ -60,12 +57,11 @@ class SubdivisionTargeting final : public AdsClientNotifierObserver,
   void UpdateUserSelectedSubdivision();
   const std::string& GetLazyUserSelectedSubdivision() const;
 
+  void OnDidUpdateAutoDetectedSubdivision();
+
   // AdsClientNotifierObserver:
   void OnNotifyDidInitializeAds() override;
   void OnNotifyPrefDidChange(const std::string& path) override;
-
-  // SubdivisionObserver:
-  void OnDidUpdateSubdivision(const std::string& subdivision) override;
 
   mutable absl::optional<std::string> auto_detected_subdivision_;
   mutable absl::optional<std::string> user_selected_subdivision_;

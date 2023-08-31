@@ -58,8 +58,9 @@ const char kShouldAllowSubdivisionTargeting[] =
 const char kSubdivisionTargetingSubdivision[] =
     "brave.brave_ads.ads_subdivision_targeting_code";
 
-// Stores the automatically detected subdivision targeting code
-const char kSubdivisionTargetingAutoDetectedSubdivision[] =
+// The legacy preference which stores the automatically detected subdivision
+// targeting code
+const char kLegacySubdivisionTargetingAutoDetectedSubdivision[] =
     "brave.brave_ads.automatically_detected_ads_subdivision_targeting_code";
 
 // Stores catalog id

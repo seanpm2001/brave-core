@@ -6,7 +6,10 @@
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting_util.h"
 
 #include "base/containers/contains.h"
+#include "brave/components/brave_ads/core/internal/client/ads_client_helper.h"
 #include "brave/components/brave_ads/core/public/targeting/geographical/subdivision/supported_subdivisions.h"
+#include "brave/components/l10n/common/prefs.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace brave_ads {
 
@@ -24,6 +27,18 @@ bool ShouldTargetSubdivision(const std::string& country_code,
   const auto& [_, subdivisions] = *iter;
 
   return base::Contains(subdivisions, subdivision);
+}
+
+std::string GetLocalStateGeoSubdivision() {
+  const absl::optional<base::Value> value =
+      AdsClientHelper::GetInstance()->GetLocalStatePref(
+          brave_l10n::prefs::kGeoSubdivision);
+  if (!value) {
+    return {};
+  }
+
+  const std::string* geo_subdivision = value->GetIfString();
+  return geo_subdivision ? *geo_subdivision : std::string();
 }
 
 }  // namespace brave_ads

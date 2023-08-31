@@ -54,6 +54,7 @@
 #include "brave/components/brave_rewards/browser/rewards_service.h"
 #include "brave/components/brave_rewards/common/mojom/rewards.mojom.h"
 #include "brave/components/l10n/common/locale_util.h"
+#include "brave/components/l10n/common/prefs.h"
 #include "brave/components/ntp_background_images/common/pref_names.h"
 #include "build/build_config.h"
 #include "chrome/browser/browser_process.h"
@@ -202,11 +203,15 @@ mojom::DBCommandResponseInfoPtr RunDBTransactionOnFileTaskRunner(
   return command_response;
 }
 
+void RegisterResourceComponentsForCountryCode(const std::string& country_code) {
+  g_brave_browser_process->resource_component()
+      ->RegisterComponentForCountryCode(country_code);
+}
+
 void RegisterResourceComponentsForDefaultCountryCode() {
   const std::string& locale = brave_l10n::GetDefaultLocaleString();
   const std::string country_code = brave_l10n::GetISOCountryCode(locale);
-  g_brave_browser_process->resource_component()
-      ->RegisterComponentForCountryCode(country_code);
+  RegisterResourceComponentsForCountryCode(country_code);
 }
 
 void RegisterResourceComponentsForDefaultLanguageCode() {
@@ -228,6 +233,7 @@ void OnUrlLoaderResponseStartedCallback(
 
 AdsServiceImpl::AdsServiceImpl(
     Profile* profile,
+    PrefService* local_state,
     brave_adaptive_captcha::BraveAdaptiveCaptchaService*
         adaptive_captcha_service,
     std::unique_ptr<AdsTooltipsDelegate> ads_tooltips_delegate,
@@ -237,6 +243,7 @@ AdsServiceImpl::AdsServiceImpl(
     brave_rewards::RewardsService* rewards_service,
     brave_federated::AsyncDataStore* notification_ad_timing_data_store)
     : profile_(profile),
+      local_state_(local_state),
       history_service_(history_service),
       adaptive_captcha_service_(adaptive_captcha_service),
       ads_tooltips_delegate_(std::move(ads_tooltips_delegate)),
@@ -251,6 +258,7 @@ AdsServiceImpl::AdsServiceImpl(
       notification_ad_timing_data_store_(notification_ad_timing_data_store),
       bat_ads_client_(this) {
   CHECK(profile_);
+  CHECK(local_state_);
   CHECK(adaptive_captcha_service_);
   CHECK(device_id_);
   CHECK(history_service_);
@@ -262,7 +270,7 @@ AdsServiceImpl::AdsServiceImpl(
         bat_ads_client_notifier_.BindNewPipeAndPassReceiver();
   }
 
-  Migrate();
+  MaybeMigratePrefs();
 
   InitializeNotificationsForCurrentProfile();
 
@@ -292,15 +300,6 @@ void AdsServiceImpl::RegisterResourceComponentsForDefaultLocale() const {
   }
 }
 
-void AdsServiceImpl::Migrate() {
-  int64_t ads_per_hour =
-      profile_->GetPrefs()->GetInt64(prefs::kMaximumNotificationAdsPerHour);
-  if (ads_per_hour == 0) {
-    profile_->GetPrefs()->ClearPref(prefs::kMaximumNotificationAdsPerHour);
-    profile_->GetPrefs()->SetBoolean(prefs::kOptedInToNotificationAds, false);
-  }
-}
-
 bool AdsServiceImpl::UserHasOptedInToBraveRewards() const {
   return profile_->GetPrefs()->GetBoolean(brave_rewards::prefs::kEnabled);
 }
@@ -324,6 +323,25 @@ bool AdsServiceImpl::UserHasOptedInToNotificationAds() const {
   return profile_->GetPrefs()->GetBoolean(prefs::kOptedInToNotificationAds);
 }
 
+void AdsServiceImpl::MaybeMigratePrefs() {
+  PrefService* prefs = profile_->GetPrefs();
+
+  if (prefs->HasPrefPath(
+          prefs::kLegacySubdivisionTargetingAutoDetectedSubdivision)) {
+    local_state_->SetString(
+        brave_l10n::prefs::kGeoSubdivision,
+        prefs->GetString(
+            prefs::kLegacySubdivisionTargetingAutoDetectedSubdivision));
+    prefs->ClearPref(prefs::kLegacySubdivisionTargetingAutoDetectedSubdivision);
+  }
+
+  int64_t ads_per_hour = prefs->GetInt64(prefs::kMaximumNotificationAdsPerHour);
+  if (ads_per_hour == 0) {
+    prefs->ClearPref(prefs::kMaximumNotificationAdsPerHour);
+    prefs->SetBoolean(prefs::kOptedInToNotificationAds, false);
+  }
+}
+
 void AdsServiceImpl::InitializeNotificationsForCurrentProfile() const {
   NotificationHelper::GetInstance()->InitForProfile(profile_);
 }
@@ -338,6 +356,7 @@ void AdsServiceImpl::GetDeviceIdAndMaybeStartBatAdsServiceCallback(
     std::string device_id) {
   sys_info_.device_id = std::move(device_id);
 
+  InitializeLocalStatePrefChangeRegistrar();
   InitializePrefChangeRegistrar();
 
   MaybeStartBatAdsService();
@@ -604,6 +623,16 @@ void AdsServiceImpl::CloseAdaptiveCaptcha() {
 #endif  // !BUILDFLAG(IS_ANDROID)
 }
 
+void AdsServiceImpl::InitializeLocalStatePrefChangeRegistrar() {
+  local_state_pref_change_registrar_.Init(local_state_);
+
+  local_state_pref_change_registrar_.Add(
+      brave_l10n::prefs::kGeoSubdivision,
+      base::BindRepeating(&AdsServiceImpl::NotifyPrefChanged,
+                          base::Unretained(this),
+                          brave_l10n::prefs::kGeoSubdivision));
+}
+
 void AdsServiceImpl::InitializePrefChangeRegistrar() {
   pref_change_registrar_.Init(profile_->GetPrefs());
 
@@ -628,12 +657,6 @@ void AdsServiceImpl::InitializeSubdivisionTargetingPrefChangeRegistrar() {
       base::BindRepeating(&AdsServiceImpl::NotifyPrefChanged,
                           base::Unretained(this),
                           prefs::kSubdivisionTargetingSubdivision));
-
-  pref_change_registrar_.Add(
-      prefs::kSubdivisionTargetingAutoDetectedSubdivision,
-      base::BindRepeating(&AdsServiceImpl::NotifyPrefChanged,
-                          base::Unretained(this),
-                          prefs::kSubdivisionTargetingAutoDetectedSubdivision));
 }
 
 void AdsServiceImpl::InitializeBraveNewsAdsPrefChangeRegistrar() {
@@ -1827,6 +1850,17 @@ void AdsServiceImpl::ClearPref(const std::string& path) {
 void AdsServiceImpl::HasPrefPath(const std::string& path,
                                  HasPrefPathCallback callback) {
   std::move(callback).Run(profile_->GetPrefs()->HasPrefPath(path));
+}
+
+void AdsServiceImpl::GetLocalStatePref(const std::string& path,
+                                       GetLocalStatePrefCallback callback) {
+  std::move(callback).Run(local_state_->GetValue(path).Clone());
+}
+
+void AdsServiceImpl::SetLocalStatePref(const std::string& path,
+                                       base::Value value) {
+  local_state_->Set(path, value);
+  NotifyPrefChanged(path);
 }
 
 void AdsServiceImpl::Log(const std::string& file,

@@ -15,6 +15,8 @@ bool ShouldTargetSubdivisionCountryCode(const std::string& country_code);
 bool ShouldTargetSubdivision(const std::string& country_code,
                              const std::string& subdivision);
 
+std::string GetLocalStateGeoSubdivision();
+
 }  // namespace brave_ads
 
 #endif  // BRAVE_COMPONENTS_BRAVE_ADS_CORE_INTERNAL_TARGETING_GEOGRAPHICAL_SUBDIVISION_SUBDIVISION_TARGETING_UTIL_H_

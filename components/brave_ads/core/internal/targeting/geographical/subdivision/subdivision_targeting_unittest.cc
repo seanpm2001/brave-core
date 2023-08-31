@@ -9,6 +9,7 @@
 
 #include "brave/components/brave_ads/core/internal/common/unittest/unittest_base.h"
 #include "brave/components/brave_ads/core/internal/common/unittest/unittest_mock_util.h"
+#include "brave/components/brave_ads/core/internal/common/unittest/unittest_pref.h"
 #include "brave/components/brave_ads/core/internal/common/unittest/unittest_pref_util.h"
 #include "brave/components/brave_ads/core/internal/geographical/subdivision/subdivision.h"
 #include "brave/components/brave_ads/core/internal/geographical/subdivision/subdivision_url_request_builder_util.h"
@@ -17,12 +18,15 @@
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting_constants.h"
 #include "brave/components/brave_ads/core/public/prefs/pref_names.h"
 #include "brave/components/brave_news/common/pref_names.h"
+#include "brave/components/l10n/common/prefs.h"
 #include "brave/components/l10n/common/test/scoped_default_locale.h"
 #include "net/http/http_status_code.h"
 
 // npm run test -- brave_unit_tests --filter=BraveAds*
 
 namespace brave_ads {
+
+namespace {}  // namespace
 
 class BraveAdsSubdivisionTargetingTest : public UnitTestBase {
  protected:
@@ -31,7 +35,6 @@ class BraveAdsSubdivisionTargetingTest : public UnitTestBase {
 
     subdivision_targeting_ = std::make_unique<SubdivisionTargeting>();
     subdivision_ = std::make_unique<Subdivision>();
-    subdivision_->AddObserver(subdivision_targeting_.get());
   }
 
   void MockHttpOkUrlResponse(const std::string& country_code,
@@ -62,8 +65,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_TRUE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(BraveAdsSubdivisionTargetingTest,
@@ -83,8 +85,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_TRUE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(BraveAdsSubdivisionTargetingTest,
@@ -133,8 +134,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_TRUE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(
@@ -202,7 +202,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
 TEST_F(BraveAdsSubdivisionTargetingTest,
        ShouldAllowAndAutoDetectIfCountryIsSupported) {
   // Arrange
-  SetStringPref(prefs::kSubdivisionTargetingAutoDetectedSubdivision, "US-CA");
+  SetLocalStatePref(brave_l10n::prefs::kGeoSubdivision, "US-CA");
 
   // Act
   NotifyDidInitializeAds();
@@ -211,14 +211,13 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_TRUE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(BraveAdsSubdivisionTargetingTest,
        ShouldAllowAndAutoDetectIfSubdivisionCodeIsUnsupported) {
   // Arrange
-  SetStringPref(prefs::kSubdivisionTargetingAutoDetectedSubdivision, "XX-XX");
+  SetLocalStatePref(brave_l10n::prefs::kGeoSubdivision, "XX-XX");
 
   // Act
   NotifyDidInitializeAds();
@@ -227,8 +226,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_FALSE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_TRUE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("XX-XX", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("XX-XX", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(BraveAdsSubdivisionTargetingTest,
@@ -247,8 +245,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
 
 TEST_F(BraveAdsSubdivisionTargetingTest, ShouldAllowIfSubdivisionCodeNotValid) {
   // Arrange
-  SetStringPref(prefs::kSubdivisionTargetingAutoDetectedSubdivision,
-                "CA-NO REGION");
+  SetLocalStatePref(brave_l10n::prefs::kGeoSubdivision, "CA-NO REGION");
 
   // Act
   NotifyDidInitializeAds();
@@ -293,8 +290,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   // Assert
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(BraveAdsSubdivisionTargetingTest,
@@ -310,10 +306,8 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_FALSE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
-  EXPECT_EQ("US-FL", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
+  EXPECT_EQ("US-FL", GetPrefValue(prefs::kSubdivisionTargetingSubdivision));
   EXPECT_EQ("US-FL", subdivision_targeting_->GetSubdivision());
 }
 
@@ -330,8 +324,7 @@ TEST_F(BraveAdsSubdivisionTargetingTest,
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_TRUE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("CA-AL", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("CA-AL", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 TEST_F(
@@ -348,10 +341,8 @@ TEST_F(
   EXPECT_FALSE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
   EXPECT_FALSE(subdivision_targeting_->ShouldAutoDetect());
-  EXPECT_EQ("XX-XX", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
-  EXPECT_EQ("US-FL", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingSubdivision));
+  EXPECT_EQ("XX-XX", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
+  EXPECT_EQ("US-FL", GetPrefValue(prefs::kSubdivisionTargetingSubdivision));
   EXPECT_EQ("US-FL", subdivision_targeting_->GetSubdivision());
 }
 
@@ -378,8 +369,7 @@ TEST_P(BraveAdsSubdivisionTargetingRetryOnInvalidUrlResponseBodyTest,
   // Assert
   EXPECT_TRUE(SubdivisionTargeting::ShouldAllow());
   EXPECT_FALSE(subdivision_targeting_->IsDisabled());
-  EXPECT_EQ("US-CA", ads_client_mock_.GetStringPref(
-                         prefs::kSubdivisionTargetingAutoDetectedSubdivision));
+  EXPECT_EQ("US-CA", GetPrefValue(brave_l10n::prefs::kGeoSubdivision));
 }
 
 INSTANTIATE_TEST_SUITE_P(

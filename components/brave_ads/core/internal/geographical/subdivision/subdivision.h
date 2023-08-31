@@ -9,8 +9,6 @@
 #include <memory>
 #include <string>
 
-#include "base/observer_list.h"
-#include "brave/components/brave_ads/core/internal/geographical/subdivision/subdivision_observer.h"
 #include "brave/components/brave_ads/core/internal/geographical/subdivision/subdivision_url_request_delegate.h"
 #include "brave/components/brave_ads/core/public/client/ads_client_notifier_observer.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
@@ -32,9 +30,6 @@ class Subdivision final : public AdsClientNotifierObserver,
 
   ~Subdivision() override;
 
-  void AddObserver(SubdivisionObserver* observer);
-  void RemoveObserver(SubdivisionObserver* observer);
-
   absl::optional<std::string> GetSubdivision() const;
 
  private:
@@ -52,8 +47,6 @@ class Subdivision final : public AdsClientNotifierObserver,
 
   // SubdivisionUrlRequestDelegate:
   void OnDidFetchSubdivision(const std::string& subdivision) override;
-
-  base::ObserverList<SubdivisionObserver> observers_;
 
   std::unique_ptr<SubdivisionUrlRequest> subdivision_url_request_;
 

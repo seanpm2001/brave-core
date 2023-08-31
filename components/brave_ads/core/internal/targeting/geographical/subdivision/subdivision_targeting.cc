@@ -5,6 +5,7 @@
 
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting.h"
 
+#include "base/logging.h"
 #include "brave/components/brave_ads/core/internal/client/ads_client_helper.h"
 #include "brave/components/brave_ads/core/internal/common/locale/locale_util.h"
 #include "brave/components/brave_ads/core/internal/common/logging_util.h"
@@ -14,6 +15,7 @@
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting_util.h"
 #include "brave/components/brave_ads/core/public/prefs/pref_names.h"
 #include "brave/components/l10n/common/locale_util.h"
+#include "brave/components/l10n/common/prefs.h"
 
 namespace brave_ads {
 
@@ -145,36 +147,25 @@ bool SubdivisionTargeting::ShouldFetchSubdivision() {
   return true;
 }
 
-void SubdivisionTargeting::SetAutoDetectedSubdivision(
-    const std::string& subdivision) {
-  CHECK(!subdivision.empty());
-
-  if (auto_detected_subdivision_ != subdivision) {
-    BLOG(1, "Automatically detected " << subdivision << " subdivision");
-
-    auto_detected_subdivision_ = subdivision;
-    AdsClientHelper::GetInstance()->SetStringPref(
-        prefs::kSubdivisionTargetingAutoDetectedSubdivision, subdivision);
-  }
-}
-
 void SubdivisionTargeting::UpdateAutoDetectedSubdivision() {
-  const std::string auto_detected_subdivision =
-      AdsClientHelper::GetInstance()->GetStringPref(
-          prefs::kSubdivisionTargetingAutoDetectedSubdivision);
+  const std::string geo_subdivision = GetLocalStateGeoSubdivision();
 
-  if (auto_detected_subdivision_ != auto_detected_subdivision) {
-    auto_detected_subdivision_ = auto_detected_subdivision;
-    BLOG(1, "Changed to automatically detected " << auto_detected_subdivision
-                                                 << " subdivision");
+  if (geo_subdivision.empty() ||
+      auto_detected_subdivision_ == geo_subdivision) {
+    return;
   }
+
+  auto_detected_subdivision_ = geo_subdivision;
+  BLOG(1, "Changed to automatically detected " << *auto_detected_subdivision_
+                                               << " subdivision");
+
+  OnDidUpdateAutoDetectedSubdivision();
 }
 
 const std::string& SubdivisionTargeting::GetLazyAutoDetectedSubdivision()
     const {
   if (!auto_detected_subdivision_) {
-    auto_detected_subdivision_ = AdsClientHelper::GetInstance()->GetStringPref(
-        prefs::kSubdivisionTargetingAutoDetectedSubdivision);
+    auto_detected_subdivision_ = GetLocalStateGeoSubdivision();
   }
 
   return *auto_detected_subdivision_;
@@ -211,28 +202,26 @@ const std::string& SubdivisionTargeting::GetLazyUserSelectedSubdivision()
   return *user_selected_subdivision_;
 }
 
+void SubdivisionTargeting::OnDidUpdateAutoDetectedSubdivision() {
+  absl::optional<std::string> country_code =
+      GetSubdivisionCountryCode(GetLazyAutoDetectedSubdivision());
+  if (!country_code) {
+    return;
+  }
+
+  MaybeAllowForCountry(*country_code);
+}
+
 void SubdivisionTargeting::OnNotifyDidInitializeAds() {
   Initialize();
 }
 
 void SubdivisionTargeting::OnNotifyPrefDidChange(const std::string& path) {
-  if (path == prefs::kSubdivisionTargetingAutoDetectedSubdivision) {
+  if (path == brave_l10n::prefs::kGeoSubdivision) {
     UpdateAutoDetectedSubdivision();
   } else if (path == prefs::kSubdivisionTargetingSubdivision) {
     UpdateUserSelectedSubdivision();
   }
-}
-
-void SubdivisionTargeting::OnDidUpdateSubdivision(
-    const std::string& subdivision) {
-  absl::optional<std::string> country_code =
-      GetSubdivisionCountryCode(subdivision);
-  if (!country_code) {
-    return;
-  }
-
-  SetAutoDetectedSubdivision(subdivision);
-  MaybeAllowForCountry(*country_code);
 }
 
 }  // namespace brave_ads

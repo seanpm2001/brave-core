@@ -40,7 +40,7 @@ extern const char kBrowserVersionNumber[];
 // Subdivision targeting prefs
 extern const char kShouldAllowSubdivisionTargeting[];
 extern const char kSubdivisionTargetingSubdivision[];
-extern const char kSubdivisionTargetingAutoDetectedSubdivision[];
+extern const char kLegacySubdivisionTargetingAutoDetectedSubdivision[];
 
 // Catalog prefs
 extern const char kCatalogId[];
