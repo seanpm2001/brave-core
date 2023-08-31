@@ -1,8 +1,8 @@
 diff --git a/components/sync/service/sync_service_impl.h b/components/sync/service/sync_service_impl.h
-index 398c5c2d25f2e45f3a273533bf8324b554a1a311..5264879e900a5c8c2482a9f2f287628653c659b8 100644
+index ba8f95509ec2b713bc8150a70d15fc79cc7c3e3c..ca5d9736e537fa18269cfc682c5a2ddaf487f63d 100644
 --- a/components/sync/service/sync_service_impl.h
 +++ b/components/sync/service/sync_service_impl.h
-@@ -247,6 +247,7 @@ class SyncServiceImpl : public SyncService,
+@@ -248,6 +248,7 @@ class SyncServiceImpl : public SyncService,
    bool IsSyncFeatureConsideredRequested() const override;
  
   private:

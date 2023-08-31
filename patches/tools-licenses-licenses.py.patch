@@ -1,5 +1,5 @@
 diff --git a/tools/licenses/licenses.py b/tools/licenses/licenses.py
-index 15b461326e2ce4bd255cbe779b449261a7f63f09..4ad542a3e8d1b806f7e63b7c10a4d37cd9b56b0a 100755
+index d2827cfcc1831fa79ad0cee5aa86caf89fc74d0e..b20a7e2f4098639e319dc2c8831cff0ae5b4bc17 100755
 --- a/tools/licenses/licenses.py
 +++ b/tools/licenses/licenses.py
 @@ -39,6 +39,7 @@ _REPOSITORY_ROOT = os.path.abspath(
@@ -10,7 +10,7 @@ index 15b461326e2ce4bd255cbe779b449261a7f63f09..4ad542a3e8d1b806f7e63b7c10a4d37c
  
  # Paths from the root of the tree to directories to skip.
  PRUNE_PATHS = set([
-@@ -425,6 +426,7 @@ SPECIAL_CASES = {
+@@ -424,6 +425,7 @@ SPECIAL_CASES = {
          "License File": ["//third_party/selenium-atoms/LICENSE.closure"],
      },
  }
