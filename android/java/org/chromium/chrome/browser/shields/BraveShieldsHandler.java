@@ -821,7 +821,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
                 String referralApiKey =
                         NTPBackgroundImagesBridge.getInstance(mProfile).getReferralApiKey();
                 BraveShieldsUtils.BraveShieldsWorkerTask mWorkerTask =
-                        new BraveShieldsUtils.BraveShieldsWorkerTask(mTitle, referralApiKey);
+                        new BraveShieldsUtils.BraveShieldsWorkerTask(mHost, referralApiKey);
                 mWorkerTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 mReportBrokenSiteLayout.setVisibility(View.GONE);
                 mThankYouLayout.setVisibility(View.VISIBLE);
