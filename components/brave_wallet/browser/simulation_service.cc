@@ -2,7 +2,6 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
-#include "brave/components/brave_wallet/browser/simulation_service.h"
 
 #include <utility>
 
@@ -10,6 +9,7 @@
 #include "brave/components/brave_wallet/browser/brave_wallet_constants.h"
 #include "brave/components/brave_wallet/browser/simulation_request_helper.h"
 #include "brave/components/brave_wallet/browser/simulation_response_parser.h"
+#include "brave/components/brave_wallet/browser/simulation_service.h"
 #include "brave/components/constants/brave_services_key.h"
 #include "brave/components/json/rs/src/lib.rs.h"
 #include "net/base/load_flags.h"
