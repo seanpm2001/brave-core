@@ -8,8 +8,8 @@
 #include <utility>
 
 #include "base/no_destructor.h"
-#include "brave/components/brave_ads/core/internal/common/subdivision/subdivision_util.h"
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting_constants.h"
+#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
 
 namespace brave_ads {
 

@@ -42,6 +42,7 @@
 #include "brave/components/brave_ads/core/public/ads/notification_ad_info.h"
 #include "brave/components/brave_ads/core/public/ads/notification_ad_value_util.h"
 #include "brave/components/brave_ads/core/public/ads_constants.h"
+#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
 #include "brave/components/brave_ads/core/public/database/database.h"
 #include "brave/components/brave_ads/core/public/feature/brave_ads_feature.h"
 #include "brave/components/brave_ads/core/public/feature/notification_ad_feature.h"
@@ -208,12 +209,6 @@ void RegisterResourceComponentsForCountryCode(const std::string& country_code) {
       ->RegisterComponentForCountryCode(country_code);
 }
 
-void RegisterResourceComponentsForDefaultCountryCode() {
-  const std::string& locale = brave_l10n::GetDefaultLocaleString();
-  const std::string country_code = brave_l10n::GetISOCountryCode(locale);
-  RegisterResourceComponentsForCountryCode(country_code);
-}
-
 void RegisterResourceComponentsForDefaultLanguageCode() {
   const std::string& locale = brave_l10n::GetDefaultLocaleString();
   const std::string language_code = brave_l10n::GetISOLanguageCode(locale);
@@ -293,11 +288,24 @@ bool AdsServiceImpl::IsBatAdsServiceBound() const {
   return bat_ads_service_.is_bound();
 }
 
-void AdsServiceImpl::RegisterResourceComponentsForDefaultLocale() const {
-  RegisterResourceComponentsForDefaultCountryCode();
+void AdsServiceImpl::RegisterResourceComponents() const {
+  RegisterResourceComponentsForCurrentCountryCode();
   if (UserHasOptedInToNotificationAds()) {
     RegisterResourceComponentsForDefaultLanguageCode();
   }
+}
+
+void AdsServiceImpl::RegisterResourceComponentsForCurrentCountryCode() const {
+  const std::string geo_subdivision =
+      local_state_->GetString(brave_l10n::prefs::kGeoSubdivision);
+  absl::optional<std::string> country_code =
+      GetSubdivisionCountryCode(geo_subdivision);
+
+  if (!country_code) {
+    country_code = brave_l10n::GetDefaultISOCountryCodeString();
+  }
+
+  RegisterResourceComponentsForCountryCode(*country_code);
 }
 
 bool AdsServiceImpl::UserHasOptedInToBraveRewards() const {
@@ -529,7 +537,7 @@ void AdsServiceImpl::InitializeBatAdsCallback(const bool success) {
 
   is_bat_ads_initialized_ = true;
 
-  RegisterResourceComponentsForDefaultLocale();
+  RegisterResourceComponents();
 
   BackgroundHelper::GetInstance()->AddObserver(this);
 
@@ -628,7 +636,7 @@ void AdsServiceImpl::InitializeLocalStatePrefChangeRegistrar() {
 
   local_state_pref_change_registrar_.Add(
       brave_l10n::prefs::kGeoSubdivision,
-      base::BindRepeating(&AdsServiceImpl::NotifyPrefChanged,
+      base::BindRepeating(&AdsServiceImpl::OnGeoSubdivisionPrefChanged,
                           base::Unretained(this),
                           brave_l10n::prefs::kGeoSubdivision));
 }
@@ -715,6 +723,12 @@ void AdsServiceImpl::OnOptedInToAdsPrefChanged(const std::string& path) {
   }
 
   MaybeStartBatAdsService();
+
+  NotifyPrefChanged(path);
+}
+
+void AdsServiceImpl::OnGeoSubdivisionPrefChanged(const std::string& path) {
+  RegisterResourceComponentsForCurrentCountryCode();
 
   NotifyPrefChanged(path);
 }

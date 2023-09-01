@@ -434,7 +434,6 @@ static_library("internal") {
     "common/strings/string_strip_util.cc",
     "common/strings/string_strip_util.h",
     "common/subdivision/subdivision_util.cc",
-    "common/subdivision/subdivision_util.h",
     "common/time/time_constraint_util.cc",
     "common/time/time_constraint_util.h",
     "common/time/time_formatting_util.cc",
