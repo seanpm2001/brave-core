@@ -26,6 +26,11 @@ function getPatch (gitRepoPath, modifiedFilePath) {
 }
 
 describe('Apply Patches', function () {
+  // Some CI nodes have trouble with these tests, occassionally taking multiple
+  // seconds for one of the simple commands. We increase the timeout to account
+  // for that.
+  jest.setTimeout(20000)
+
   let gitPatcher, repoPath, patchPath, testFile1Path, testFile1PatchPath
 
   beforeEach(async function () {
@@ -80,7 +85,7 @@ describe('Apply Patches', function () {
       console.warn(`Test cleanup: could not remove directory at ${patchPath}`)
     }
   })
-  
+
   test('applies simple patch to unmodified original', async function () {
     validate()
     const affectedPaths = await gitPatcher.applyPatches()
@@ -153,7 +158,7 @@ describe('Apply Patches', function () {
     await fs.writeFile(testFile1PatchPath, 'bad patch', writeReadFileOptions)
     const status = await gitPatcher.applyPatches()
     expect(status).toHaveLength(1)
-    expect(status[0]).toHaveProperty('patchPath', testFile1PatchPath) 
+    expect(status[0]).toHaveProperty('patchPath', testFile1PatchPath)
     expect(status[0]).toHaveProperty('path', undefined)
     expect(status[0]).toHaveProperty('error')
   })
