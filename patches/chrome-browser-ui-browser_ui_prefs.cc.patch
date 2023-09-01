@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser_ui_prefs.cc b/chrome/browser/ui/browser_ui_prefs.cc
-index 762b8c5cfe08c88e0a13be1dc335eb11144a9b7e..cd8dee632f006da219c553786a808ab5b2cf802e 100644
+index 1d312986c62def1b09ca502e02d755b56c6cdcb0..8e9b4707b730fb1f1bd060bb109bfba2b59488c5 100644
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
 @@ -83,7 +83,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
@@ -10,4 +10,4 @@ index 762b8c5cfe08c88e0a13be1dc335eb11144a9b7e..cd8dee632f006da219c553786a808ab5
 +      user_prefs::PrefRegistrySyncable::NO_REGISTRATION_FLAGS);
    registry->RegisterStringPref(prefs::kCloudPrintEmail, std::string());
    registry->RegisterBooleanPref(prefs::kCloudPrintProxyEnabled, true);
-   registry->RegisterBooleanPref(prefs::kCloudPrintSubmitEnabled, true);
+   registry->RegisterDictionaryPref(prefs::kBrowserWindowPlacement);
