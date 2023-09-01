@@ -1,5 +1,5 @@
 diff --git a/components/BUILD.gn b/components/BUILD.gn
-index 0f65455cfdc6f8d409b951eb9deb517a0cffe862..79d73a48dc2bf9d1be6b20f0afd6af7e9eba38df 100644
+index ea3ec6f74f477ae119de778a3dc22cdf7ec22947..184514468ac125cacf94e74bc3c5ac8cf97db6e3 100644
 --- a/components/BUILD.gn
 +++ b/components/BUILD.gn
 @@ -774,7 +774,7 @@ repack("components_tests_pak") {
