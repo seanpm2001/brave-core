@@ -10,14 +10,14 @@
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
 #include "content/public/browser/browser_context.h"
 
-#define BuildServiceInstanceFor                         \
-  BuildServiceInstanceFor_unused();                     \
+#define BrowserContextDestroyed                         \
+  BrowserContextDestroyed_unused();                     \
   content::BrowserContext* GetBrowserContextToUse(      \
       content::BrowserContext* context) const override; \
-  KeyedService* BuildServiceInstanceFor
+  void BrowserContextDestroyed
 
 #include "src/chrome/browser/search_engines/template_url_service_factory.h"  // IWYU pragma: export
 
-#undef BuildServiceInstanceFor
+#undef BrowserContextDestroyed
 
 #endif  // BRAVE_CHROMIUM_SRC_CHROME_BROWSER_SEARCH_ENGINES_TEMPLATE_URL_SERVICE_FACTORY_H_
