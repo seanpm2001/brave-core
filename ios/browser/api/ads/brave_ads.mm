@@ -1569,6 +1569,31 @@ brave_ads::mojom::DBCommandResponseInfoPtr RunDBTransactionOnTaskRunner(
   return [self.prefs objectForKey:key] != nil;
 }
 
+- (void)setLocalStatePref:(const std::string&)path value:(base::Value)value {
+  std::string json;
+  if (base::JSONWriter::Write(value, &json)) {
+    const auto key = base::SysUTF8ToNSString(path);
+    self.prefs[key] = base::SysUTF8ToNSString(json);
+    [self savePref:key];
+  }
+}
+
+- (absl::optional<base::Value>)getLocalStatePref:(const std::string&)path {
+  const auto key = base::SysUTF8ToNSString(path);
+  const auto json = (NSString*)self.prefs[key];
+  if (!json) {
+    return absl::nullopt;
+  }
+
+  absl::optional<base::Value> value =
+      base::JSONReader::Read(base::SysNSStringToUTF8(json));
+  if (!value) {
+    return absl::nullopt;
+  }
+
+  return value->Clone();
+}
+
 #pragma mark - Ads Resources Paths
 
 - (NSDictionary*)componentPaths {

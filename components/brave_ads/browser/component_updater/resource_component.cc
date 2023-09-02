@@ -74,7 +74,7 @@ void ResourceComponent::RegisterComponentForCountryCode(
 
   if (country_code_component_id_ &&
       country_code_component_id_ != component->id.data()) {
-    Unregister();
+    Unregister(*country_code_component_id_);
   }
   country_code_component_id_ = component->id.data();
 
@@ -98,7 +98,7 @@ void ResourceComponent::RegisterComponentForLanguageCode(
 
   if (language_code_component_id_ &&
       language_code_component_id_ != component->id.data()) {
-    Unregister();
+    Unregister(*language_code_component_id_);
   }
   language_code_component_id_ = component->id.data();
 

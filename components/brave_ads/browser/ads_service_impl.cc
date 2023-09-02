@@ -42,7 +42,6 @@
 #include "brave/components/brave_ads/core/public/ads/notification_ad_info.h"
 #include "brave/components/brave_ads/core/public/ads/notification_ad_value_util.h"
 #include "brave/components/brave_ads/core/public/ads_constants.h"
-#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
 #include "brave/components/brave_ads/core/public/database/database.h"
 #include "brave/components/brave_ads/core/public/feature/brave_ads_feature.h"
 #include "brave/components/brave_ads/core/public/feature/notification_ad_feature.h"
@@ -56,6 +55,7 @@
 #include "brave/components/brave_rewards/common/mojom/rewards.mojom.h"
 #include "brave/components/l10n/common/locale_util.h"
 #include "brave/components/l10n/common/prefs.h"
+#include "brave/components/l10n/common/subdivision/subdivision_util.h"
 #include "brave/components/ntp_background_images/common/pref_names.h"
 #include "build/build_config.h"
 #include "chrome/browser/browser_process.h"
@@ -296,16 +296,10 @@ void AdsServiceImpl::RegisterResourceComponents() const {
 }
 
 void AdsServiceImpl::RegisterResourceComponentsForCurrentCountryCode() const {
-  const std::string geo_subdivision =
-      local_state_->GetString(brave_l10n::prefs::kGeoSubdivision);
-  absl::optional<std::string> country_code =
-      GetSubdivisionCountryCode(geo_subdivision);
+  const std::string country_code =
+      brave_l10n::GetCurrentSubdivisionCountryCode(local_state_);
 
-  if (!country_code) {
-    country_code = brave_l10n::GetDefaultISOCountryCodeString();
-  }
-
-  RegisterResourceComponentsForCountryCode(*country_code);
+  RegisterResourceComponentsForCountryCode(country_code);
 }
 
 bool AdsServiceImpl::UserHasOptedInToBraveRewards() const {

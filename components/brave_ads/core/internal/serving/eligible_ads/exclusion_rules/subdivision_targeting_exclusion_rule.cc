@@ -13,7 +13,7 @@
 #include "base/strings/string_util.h"
 #include "brave/components/brave_ads/core/internal/creatives/creative_ad_info.h"
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting.h"
-#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
+#include "brave/components/l10n/common/subdivision/subdivision_util.h"
 
 namespace brave_ads {
 
@@ -35,7 +35,7 @@ bool DoesCreativeAdTargetSubdivision(const CreativeAdInfo& creative_ad,
                                      const std::string& subdivision) {
   return base::Contains(creative_ad.geo_targets, subdivision) ||
          base::Contains(creative_ad.geo_targets,
-                        GetSubdivisionCountryCode(subdivision));
+                        brave_l10n::GetSubdivisionCountryCode(subdivision));
 }
 
 }  // namespace

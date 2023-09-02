@@ -9,11 +9,11 @@
 #include "brave/components/brave_ads/core/internal/common/logging_util.h"
 #include "brave/components/brave_ads/core/internal/geographical/subdivision/subdivision_url_request.h"
 #include "brave/components/brave_ads/core/internal/settings/settings.h"
-#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
 #include "brave/components/brave_ads/core/public/prefs/pref_names.h"
 #include "brave/components/brave_news/common/pref_names.h"
 #include "brave/components/brave_rewards/common/pref_names.h"
 #include "brave/components/l10n/common/prefs.h"
+#include "brave/components/l10n/common/subdivision/subdivision_util.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace brave_ads {
@@ -87,9 +87,10 @@ void Subdivision::OnNotifyPrefDidChange(const std::string& path) {
 
 void Subdivision::OnDidFetchSubdivision(const std::string& subdivision) {
   CHECK(!subdivision.empty());
-  absl::optional<std::string> region = GetSubdivisionCountryCode(subdivision);
+  absl::optional<std::string> region =
+      brave_l10n::GetSubdivisionCountryCode(subdivision);
   absl::optional<std::string> subdivision_code =
-      GetSubdivisionCode(subdivision);
+      brave_l10n::GetSubdivisionCode(subdivision);
 
   if (!region || !subdivision_code) {
     return;

@@ -14,6 +14,8 @@ static_library("common") {
     "localization_util.h",
     "ofac_sanction_util.h",
     "prefs.h",
+    "subdivision/subdivision_feature.h",
+    "subdivision/subdivision_util.h",
     "un_m49_code_util.h",
   ]
 
@@ -33,9 +35,10 @@ static_library("common") {
     "ofac_sanctioned_iso_3166_1_country_code_constants.h",
     "ofac_sanctioned_un_m49_code_constants.h",
     "prefs.cc",
+    "subdivision/subdivision_feature.cc",
+    "subdivision/subdivision_util.cc",
     "un_m49_code_constants.h",
     "un_m49_code_util.cc",
-    "un_m49_code_util.h",
   ]
 
   deps = [
@@ -68,6 +71,7 @@ source_set("unit_tests") {
     "locale_util_unittest.cc",
     "localization_util_unittest.cc",
     "ofac_sanction_util_unittest.cc",
+    "subdivision/subdivision_util_unittest.cc",
     "un_m49_code_util_unittest.cc",
   ]
 

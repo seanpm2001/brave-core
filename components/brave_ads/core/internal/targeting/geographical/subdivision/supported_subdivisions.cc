@@ -9,7 +9,7 @@
 
 #include "base/no_destructor.h"
 #include "brave/components/brave_ads/core/internal/targeting/geographical/subdivision/subdivision_targeting_constants.h"
-#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
+#include "brave/components/l10n/common/subdivision/subdivision_util.h"
 
 namespace brave_ads {
 
@@ -38,7 +38,7 @@ absl::optional<std::string> GetCurrentSubdivisionCountryCode(
   const std::string subdivision = should_use_user_selected
                                       ? user_selected_subdivision
                                       : auto_detected_subdivision;
-  return GetSubdivisionCountryCode(subdivision);
+  return brave_l10n::GetSubdivisionCountryCode(subdivision);
 }
 
 }  // namespace

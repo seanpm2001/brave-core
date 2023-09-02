@@ -30,7 +30,6 @@ source_set("headers") {
     "client/ads_client_callback.h",
     "client/ads_client_notifier.h",
     "client/ads_client_notifier_observer.h",
-    "common/subdivision/subdivision_util.h",
     "confirmation_type.h",
     "database/database.h",
     "export.h",

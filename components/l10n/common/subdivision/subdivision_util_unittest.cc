@@ -3,13 +3,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/brave_ads/core/public/common/subdivision/subdivision_util.h"
+#include "brave/components/l10n/common/subdivision/subdivision_util.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 
 // npm run test -- brave_unit_tests --filter=BraveAds*
 
-namespace brave_ads {
+namespace brave_l10n {
 
 TEST(BraveAdsSubdivisionUtilTest, GetSubdivisionCountryCode) {
   // Arrange
@@ -47,4 +47,4 @@ TEST(BraveAdsSubdivisionUtilTest, DoNotGetSubdivisionCode) {
   EXPECT_FALSE(GetSubdivisionCode({}));
 }
 
-}  // namespace brave_ads
+}  // namespace brave_l10n
