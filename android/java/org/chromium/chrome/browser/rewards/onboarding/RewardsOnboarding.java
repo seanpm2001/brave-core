@@ -181,7 +181,9 @@ public class RewardsOnboarding implements BraveRewardsObserver {
         countrySpinner = mPopupView.findViewById(R.id.country_spinner);
 
         CountrySelectionSpinnerAdapter countrySelectionSpinnerAdapter =
-                new CountrySelectionSpinnerAdapter(mActivity, countryList);
+                new CountrySelectionSpinnerAdapter(mActivity, countryArray);
+        countrySelectionSpinnerAdapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
         countrySpinner.setAdapter(countrySelectionSpinnerAdapter);
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
