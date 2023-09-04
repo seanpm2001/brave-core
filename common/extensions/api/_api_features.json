@@ -74,6 +74,7 @@
     "platforms": ["chromeos"]
   }],
   "extension.inIncognitoContext": [{
+    "channel": "stable",
     "contexts": ["blessed_extension", "unblessed_extension", "content_script"]
   }, {
     "channel": "stable",
