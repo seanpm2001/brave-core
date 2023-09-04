@@ -26,8 +26,6 @@
 
 namespace brave_ads {
 
-namespace {}  // namespace
-
 class BraveAdsSubdivisionTargetingTest : public UnitTestBase {
  protected:
   void SetUp() override {

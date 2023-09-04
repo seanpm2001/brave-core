@@ -467,20 +467,20 @@ brave_ads::mojom::DBCommandResponseInfoPtr RunDBTransactionOnTaskRunner(
   }
 
   if ([self.prefs
+          objectForKey:kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey]) {
+    self.prefs[kGeoSubdivisionPrefKey] =
+        self.prefs[kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+    [self.prefs removeObjectForKey:
+                    kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+  }
+
+  if ([self.prefs
           objectForKey:
               kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey]) {
     self.prefs[kGeoSubdivisionPrefKey] =
         self.prefs[kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey];
     [self.prefs removeObjectForKey:
                     kLegacySubdivisionTargetingAutoDetectedSubdivisionPrefKey];
-  }
-
-  if ([self.prefs
-          objectForKey:kAutoDetectedAdsSubdivisionTargetingCodePrefKey]) {
-    self.prefs[kGeoSubdivisionPrefKey] =
-        self.prefs[kAutoDetectedAdsSubdivisionTargetingCodePrefKey];
-    [self.prefs
-        removeObjectForKey:kAutoDetectedAdsSubdivisionTargetingCodePrefKey];
   }
 
   [self savePrefs];
