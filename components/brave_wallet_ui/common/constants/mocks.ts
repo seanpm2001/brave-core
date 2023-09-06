@@ -1223,7 +1223,7 @@ export const mockSimulatedBuyERC1155Token: SafeBlowfishEvmResponse = {
                 rawImageUrl:
                   'https://cdn.simplehash.com/assets/4bedd702e7ea8c4a9d04d83302138fa5b63d0cca0f06df9b87bdb09cff253b88.png'
               },
-              tokenId: '13014975',
+              tokenId: '1234',
               assetPrice: {
                 source: 'Simplehash',
                 lastUpdatedAt: '1679331222',

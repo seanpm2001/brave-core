@@ -3,131 +3,114 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
-import { BraveWallet } from '../constants/types'
-import Amount from './amount'
+import {
+  BLOWFISH_URL_WARNING_KINDS,
+  BlowfishURLWarningKind
+} from '../common/constants/blowfish'
+import {
+  BlowfishSimulationResponse,
+  SafeBlowfishWarning,
+  BlowfishWarningActionKind,
+  BraveWallet,
+  SafeSolanaSimulationResults,
+  SafeEVMSimulationResults,
+  SafeSolanaStateChange,
+  SafeEvmApprovalEvent,
+  SafeEvmTransferEvent,
+  SafeERC20ApprovalEvent,
+  SafeERC721ApprovalEvent,
+  SafeERC721ApprovalForAllEvent,
+  SafeERC1155ApprovalForAllEvent,
+  SafeERC20TransferEvent,
+  SafeERC721TransferEvent,
+  SafeERC1155TransferEvent,
+  SafeNativeTransferEvent,
+  SafeSolTransferEvent,
+  SafeSolanaStakeChangeEvent,
+  SafeSplApprovalEvent,
+  SafeSplTransferEvent,
+  SafeBlowfishSimulationResponse,
+  SafeEVMStateChange,
+  SafeEvmEvent,
+  // SafeSolanaAccountOwnerChangeEvent,
+} from '../constants/types'
 
-interface EVMStateChanges {
-  erc20Approvals: BraveWallet.BlowfishERC20ApprovalData[]
-  erc721Approvals: BraveWallet.BlowfishERC721ApprovalData[]
-  erc721ApprovalsForAll: BraveWallet.BlowfishERC721ApprovalForAllData[]
-  erc1155ApprovalsForAll: BraveWallet.BlowfishERC1155ApprovalForAllData[]
-
-  inboundErc1155Transfers: BraveWallet.BlowfishERC1155TransferData[]
-  inboundErc20Transfers: BraveWallet.BlowfishERC20TransferData[]
-  inboundErc721Transfers: BraveWallet.BlowfishERC721TransferData[]
-  inboundNativeAssetTransfers: BraveWallet.BlowfishNativeAssetTransferData[]
-
-  outboundErc1155Transfers: BraveWallet.BlowfishERC1155TransferData[]
-  outboundErc20Transfers: BraveWallet.BlowfishERC20TransferData[]
-  outboundErc721Transfers: BraveWallet.BlowfishERC721TransferData[]
-  outboundNativeAssetTransfers: BraveWallet.BlowfishNativeAssetTransferData[]
+interface GroupedEVMStateChanges {
+  evmApprovals: SafeEvmApprovalEvent[]
+  evmTransfers: SafeEvmTransferEvent[]
 }
 
-interface SVMStateChanges {
-  solStakeAuthorityChanges: BraveWallet.BlowfishSOLStakeAuthorityChangeData[]
-  splApprovals: BraveWallet.BlowfishSPLApprovalData[]
-  inboundNativeAssetTransfers: BraveWallet.BlowfishSOLTransferData[]
-  outboundNativeAssetTransfers: BraveWallet.BlowfishSOLTransferData[]
-  inboundSplTransfers: BraveWallet.BlowfishSPLTransferData[]
-  outboundSplTransfers: BraveWallet.BlowfishSPLTransferData[]
+interface GroupedSVMStateChanges {
+  svmStakeAuthorityChanges: SafeSolanaStakeChangeEvent[]
+  splApprovals: SafeSplApprovalEvent[]
+  svmTransfers: Array<
+    | SafeSolTransferEvent
+    | SafeSplTransferEvent
+  >
 }
 
-type DiffSign = 'PLUS' | 'MINUS'
+export const decodeSimulatedTxResponseActionsAndWarnings = <
+  T extends BlowfishSimulationResponse | SafeBlowfishSimulationResponse
+>(
+  response: T
+) => {
+  return {
+    action: response.action as BlowfishWarningActionKind,
+    warnings: response.warnings as SafeBlowfishWarning[],
+    simulationResults:
+      response.simulationResults as T extends BraveWallet.EVMSimulationResponse
+        ? SafeEVMSimulationResults
+        : SafeSolanaSimulationResults
+  } as const
+}
 
-const isInboundEVMTransfer = (transferData: {
-  amount: BraveWallet.BlowfishEVMAmount
-}) => {
-  const { amount } = transferData
-  if (new Amount(amount.after).gt(amount.before)) {
-    return true
+export const groupSimulatedEVMStateChanges = (
+  evmStateChanges:
+    | BraveWallet.BlowfishEVMStateChange[]
+    | SafeEVMStateChange[]
+    | SafeEvmEvent[]
+): GroupedEVMStateChanges => {
+  const changes: GroupedEVMStateChanges = {
+    evmApprovals: [],
+    evmTransfers: []
   }
 
-  // outbound
-  return false
-}
-
-const isInboundSVMTransfer = (transferData: {
-  diff: BraveWallet.BlowfishSolanaDiff
-}) => {
-  const { diff } = transferData
-
-  return diff.sign as DiffSign === 'PLUS'
-}
-
-export const decodeSimulatedEVMStateChanges = (
-  evmStateChanges: BraveWallet.BlowfishEVMStateChange[]
-): EVMStateChanges => {
-  const changes: EVMStateChanges = {
-    erc1155ApprovalsForAll: [],
-    erc20Approvals: [],
-    erc721Approvals: [],
-    erc721ApprovalsForAll: [],
-    inboundErc1155Transfers: [],
-    inboundErc20Transfers: [],
-    inboundErc721Transfers: [],
-    inboundNativeAssetTransfers: [],
-    outboundErc1155Transfers: [],
-    outboundErc20Transfers: [],
-    outboundErc721Transfers: [],
-    outboundNativeAssetTransfers: []
-  }
-
-  for (const { rawInfo } of evmStateChanges) {
-    const { data } = rawInfo
+  for (const stateChange of evmStateChanges as SafeEVMStateChange[]) {
+    const { data } = stateChange.rawInfo
 
     // approvals
     if (data.erc20ApprovalData) {
-      changes.erc20Approvals.push(data.erc20ApprovalData)
+      changes.evmApprovals.push(stateChange as SafeERC20ApprovalEvent)
     }
 
     if (data.erc721ApprovalData) {
-      changes.erc721Approvals.push(data.erc721ApprovalData)
+      changes.evmApprovals.push(stateChange as SafeERC721ApprovalEvent)
     }
 
     // approvals for all
     if (data.erc721ApprovalForAllData) {
-      changes.erc721ApprovalsForAll.push(data.erc721ApprovalForAllData)
+      changes.evmApprovals.push(stateChange as SafeERC721ApprovalForAllEvent)
     }
 
     if (data.erc1155ApprovalForAllData) {
-      changes.erc1155ApprovalsForAll.push(data.erc1155ApprovalForAllData)
+      changes.evmApprovals.push(stateChange as SafeERC1155ApprovalForAllEvent)
     }
 
     // transfers
     if (data.erc20TransferData) {
-      if (isInboundEVMTransfer(data.erc20TransferData)) {
-        changes.inboundErc20Transfers.push(data.erc20TransferData)
-      }
-
-      // outbound
-      changes.outboundErc20Transfers.push(data.erc20TransferData)
+      changes.evmTransfers.push(stateChange as SafeERC20TransferEvent)
     }
 
     if (data.erc721TransferData) {
-      if (data.erc721TransferData) {
-        changes.inboundErc721Transfers.push(data.erc721TransferData)
-      }
-
-      // outbound
-      changes.outboundErc721Transfers.push(data.erc721TransferData)
+      changes.evmTransfers.push(stateChange as SafeERC721TransferEvent)
     }
 
     if (data.erc1155TransferData) {
-      if (isInboundEVMTransfer(data.erc1155TransferData)) {
-        changes.inboundErc1155Transfers.push(data.erc1155TransferData)
-      }
-
-      // outbound
-      changes.outboundErc1155Transfers.push(data.erc1155TransferData)
+      changes.evmTransfers.push(stateChange as SafeERC1155TransferEvent)
     }
 
     if (data.nativeAssetTransferData) {
-      if (isInboundEVMTransfer(data.nativeAssetTransferData)) {
-        changes.inboundNativeAssetTransfers.push(data.nativeAssetTransferData)
-      }
-
-      // outbound
-      changes.outboundNativeAssetTransfers.push(data.nativeAssetTransferData)
+      changes.evmTransfers.push(stateChange as SafeNativeTransferEvent)
     }
   }
 
@@ -135,46 +118,74 @@ export const decodeSimulatedEVMStateChanges = (
 }
 
 export const decodeSimulatedSVMStateChanges = (
-  stateChanges: BraveWallet.BlowfishSolanaStateChange[]
-): SVMStateChanges => {
-
-  const changes: SVMStateChanges = {
-    solStakeAuthorityChanges: [],
+  stateChanges:
+    | BraveWallet.BlowfishSolanaStateChange[]
+    | SafeSolanaStateChange[]
+): GroupedSVMStateChanges => {
+  const changes: GroupedSVMStateChanges = {
+    svmStakeAuthorityChanges: [],
     splApprovals: [],
-    inboundNativeAssetTransfers: [],
-    inboundSplTransfers: [],
-    outboundNativeAssetTransfers: [],
-    outboundSplTransfers: []
+    svmTransfers: []
   }
 
-  for (const { rawInfo } of stateChanges) {
-    const { data } = rawInfo
+  for (const stateChange of stateChanges as SafeSolanaStateChange[]) {
+    const { data } = stateChange.rawInfo
+
+    // TODO: account owner changes
+    // if (data) {
+    //   changes.svmStakeAuthorityChanges.push(
+    //     stateChange as SafeSolanaAccountOwnerChangeEvent
+    //   )
+    // }
 
     // staking auth changes
     if (data.solStakeAuthorityChangeData) {
-      changes.solStakeAuthorityChanges.push(data.solStakeAuthorityChangeData)
+      changes.svmStakeAuthorityChanges.push(
+        stateChange as SafeSolanaStakeChangeEvent
+      )
     }
 
     // approvals
     if (data.splApprovalData) {
-      changes.splApprovals.push(data.splApprovalData)
+      changes.splApprovals.push(stateChange as SafeSplApprovalEvent)
     }
 
     // transfers
     if (data.solTransferData) {
-      if (isInboundSVMTransfer(data.solTransferData)) {
-        changes.inboundNativeAssetTransfers.push(data.solTransferData)
-      }
-      changes.outboundNativeAssetTransfers.push(data.solTransferData)
+      changes.svmTransfers.push(stateChange as SafeSolTransferEvent)
     }
 
     if (data.splTransferData) {
-      if (isInboundSVMTransfer(data.splTransferData)) {
-        changes.inboundSplTransfers.push(data.splTransferData)
-      }
-      changes.outboundSplTransfers.push(data.splTransferData)
+      changes.svmTransfers.push(stateChange as SafeSplTransferEvent)
     }
   }
 
   return changes
+}
+
+export const translateEvmSimulationResultError = (
+  error:
+    | BraveWallet.BlowfishEVMError
+    | BraveWallet.BlowfishSolanaError
+    | undefined
+) => {
+  if (!error) {
+    return ''
+  }
+
+  // TODO: getLocale('')
+  switch (error?.kind) {
+    case 'TRANSACTION_REVERTED':
+      return 'TRANSACTION_REVERTED'
+    default:
+      return error.humanReadableError || 'UNKNOWN ERROR'
+  }
+}
+
+export const isUrlWarning = (
+  warningKind: string
+): warningKind is BlowfishURLWarningKind => {
+  return BLOWFISH_URL_WARNING_KINDS.includes(
+    warningKind as BlowfishURLWarningKind
+  )
 }

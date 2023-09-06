@@ -5,20 +5,29 @@
 
 import * as React from 'react'
 
+// types
+import { BraveWallet } from '../../../constants/types'
+
 // mocks
 import {
   mockSolDappSignAllTransactionsRequest,
   mockSolDappSignAndSendTransactionRequest,
   mockSolDappSignTransactionRequest
 } from '../../../common/constants/mocks'
+import {
+  mockSolanaMainnetNetwork //
+} from '../../../stories/mock-data/mock-networks'
 
-// components
-import { WalletPanelStory } from '../../../stories/wrappers/wallet-panel-story-wrapper'
-import { SignTransactionPanel } from './sign-transaction-panel'
+// utils
 import {
   deserializeTransaction //
 } from '../../../utils/model-serialization-utils'
-import { BraveWallet } from '../../../constants/types'
+
+// components
+import {
+  WalletPanelStory //
+} from '../../../stories/wrappers/wallet-panel-story-wrapper'
+import { SignTransactionPanel } from './sign-transaction-panel'
 
 export const _SignAllSolanaTxPanel = () => {
   return (
@@ -41,7 +50,20 @@ export const _SignAllSolanaTxPanel = () => {
         ]
       }}
     >
-      <SignTransactionPanel signMode={'signAllTxs'} />
+      <SignTransactionPanel
+        signMode={'signAllTxs'}
+        isSigningDisabled={false}
+        network={mockSolanaMainnetNetwork}
+        queueNextSignTransaction={function (): void {
+          throw new Error('Function not implemented.')
+        }}
+        selectedQueueData={mockSolDappSignAllTransactionsRequest}
+        txDatas={mockSolDappSignAllTransactionsRequest.txDatas.map(
+          (u) => u.solanaTxData!
+        )}
+        queueLength={1}
+        queueNumber={0}
+      />
     </WalletPanelStory>
   )
 }
@@ -64,7 +86,18 @@ export const _SignSolanaTxPanel = () => {
         ]
       }}
     >
-      <SignTransactionPanel signMode="signTx" />
+      <SignTransactionPanel
+        signMode='signTx'
+        isSigningDisabled={false}
+        network={mockSolanaMainnetNetwork}
+        queueNextSignTransaction={function (): void {
+          throw new Error('Function not implemented.')
+        }}
+        selectedQueueData={mockSolDappSignTransactionRequest}
+        txDatas={[mockSolDappSignTransactionRequest.txData.solanaTxData!]}
+        queueLength={1}
+        queueNumber={0}
+      />
     </WalletPanelStory>
   )
 }

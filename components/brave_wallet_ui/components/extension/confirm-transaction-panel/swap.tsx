@@ -37,7 +37,11 @@ import { EditButton, NetworkText, StyledWrapper, TopRow } from './style'
 import { CreateNetworkIcon } from '../../shared/create-network-icon/index'
 import { LoadingSkeleton } from '../../shared/loading-skeleton/index'
 import { withPlaceholderIcon } from '../../shared/create-placeholder-icon/index'
-import { IconsWrapper as SwapAssetIconWrapper, NetworkIconWrapper } from '../../shared/style'
+import {
+  IconsWrapper as SwapAssetIconWrapper,
+  NetworkIconWrapper,
+  VerticalSpace
+} from '../../shared/style'
 import { NftIcon } from '../../shared/nft-icon/nft-icon'
 import { Origin } from './common/origin'
 import { EditPendingTransactionGas } from './common/gas'
@@ -49,6 +53,9 @@ import AdvancedTransactionSettings from '../advanced-transaction-settings'
 import {
   PendingTransactionNetworkFeeAndSettings //
 } from '../pending-transaction-network-fee/pending-transaction-network-fee'
+import {
+  TxSimulationFailedWarning //
+} from './common/tx_simulation_failed_warning'
 
 // Types
 import { BraveWallet } from '../../../constants/types'
@@ -61,7 +68,11 @@ import {
   useUnsafeWalletSelector //
 } from '../../../common/hooks/use-safe-selector'
 
-export function ConfirmSwapTransaction () {
+interface Props {
+  retrySimulation?: () => void
+}
+
+export function ConfirmSwapTransaction ({ retrySimulation }: Props) {
   // redux
   const activeOrigin = useUnsafeWalletSelector(WalletSelectors.activeOrigin)
 
@@ -77,14 +88,12 @@ export function ConfirmSwapTransaction () {
     toOrb,
     updateUnapprovedTransactionNonce,
     selectedPendingTransaction,
-    onConfirm,
-    onReject,
     queueNextTransaction,
     transactionQueueNumber,
     transactionsQueueLength
   } = usePendingTransactions()
 
-  // queries
+  // queries & mutations
   const { data: makerAssetNetwork } = useGetNetworkQuery(
     transactionDetails?.sellToken ?? skipToken
   )
@@ -188,11 +197,14 @@ export function ConfirmSwapTransaction () {
         onToggleEditGas={onToggleEditGas}
       />
 
-      <Footer
-        onConfirm={onConfirm}
-        onReject={onReject}
-        rejectButtonType={'cancel'}
-      />
+      {retrySimulation ? (
+        <>
+          <VerticalSpace space='16px' />
+          <TxSimulationFailedWarning retrySimulation={retrySimulation} />
+        </>
+      ) : null}
+
+      <Footer rejectButtonType={'cancel'} />
     </StyledWrapper>
   )
 }
@@ -211,7 +223,7 @@ const ICON_CONFIG = { size: 'big', marginLeft: 0, marginRight: 8 } as const
 const AssetIconWithPlaceholder = withPlaceholderIcon(AssetIcon, ICON_CONFIG)
 const NftIconWithPlaceholder = withPlaceholderIcon(NftIcon, ICON_CONFIG)
 
-function SwapAsset (props: SwapAssetProps) {
+export function SwapAsset (props: SwapAssetProps) {
   const { type, address, orb, expectAddress, asset, amount, network } = props
 
   // computed
@@ -250,11 +262,11 @@ function SwapAsset (props: SwapAssetProps) {
 
       <SwapAssetDetailsContainer>
         <SwapAssetIconWrapper>
-          {!AssetIconWithPlaceholder || !asset || !asset.logo || !network ? (
+          {!asset || !asset.logo || !network ? (
             <LoadingSkeleton circle={true} width={40} height={40} />
           ) : (
             <>
-              {asset.isErc721 ? (
+              {asset?.isErc721 ? (
                 <NftIconWithPlaceholder asset={asset} network={network} />
               ) : (
                 <AssetIconWithPlaceholder asset={asset} network={network} />
@@ -302,3 +314,5 @@ function SwapAsset (props: SwapAssetProps) {
     </SwapAssetContainer>
   )
 }
+
+

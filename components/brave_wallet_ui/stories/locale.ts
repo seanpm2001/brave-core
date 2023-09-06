@@ -152,6 +152,8 @@ provideStrings({
   braveWalletButtonCancel: 'Cancel',
   braveWalletButtonSaveChanges: 'Save changes',
   braveWalletLearnMore: 'Learn more',
+  braveWalletButtonNoThanks: 'No thanks',
+  braveWalletButtonEnable: 'Enable',
 
   // Onboarding - Welcome
   braveWalletWelcomeTitle: 'Secure. Multi-chain. And oh-so-easy to use. Your Brave Wallet is just a few clicks away',
@@ -803,7 +805,6 @@ provideStrings({
   braveWalletShowSpamNftsTitle: 'Spam NFTs',
   braveWalletShowSpamNftsDescription: 'Show Spam NFTs',
 
-
   // Account Filter
   braveWalletAccountFilterAllAccounts: 'All accounts',
 
@@ -986,5 +987,19 @@ provideStrings({
   braveWalletAutoDiscoveryEmptyStateSubHeading: 'Once an NFT is detected, it\’ll be displayed here.',
   braveWalletAutoDiscoveryEmptyStateFooter: 'Can\’t see your NFTs?',
   braveWalletAutoDiscoveryEmptyStateActions: '$1Refresh$2 or $3Import Manually$4',
-  braveWalletAutoDiscoveryEmptyStateRefresh: 'Refreshing' 
+  braveWalletAutoDiscoveryEmptyStateRefresh: 'Refreshing',
+
+  // Transaction Simulations Opt-in
+  braveWalletEnableEnhancedTransactionDetailsTitle:
+    'Enable Enhanced Transaction Details to:',
+  braveWalletTransactionSimulationSeeEstimates: 'See estimated balance change',
+  braveWalletTransactionSimulationDetectMalicious:
+    'Identify potentially malicious transactions',
+  braveWalletTransactionSimulationDetectPhishing:
+    'Help detect phishing attempts',
+  braveWalletTransactionSimulationTerms:
+    'Brave works with a partner to provide this service. ' +
+    'By enabling, you agree to share unsigned transactions ' +
+    'and their DApp URLs with our partner.',
+  braveWalletChangeAnytimeInSettings: 'Change anytime in $1Settings$2.'
 })

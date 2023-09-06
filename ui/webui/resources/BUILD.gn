@@ -323,6 +323,7 @@ leo_icons = [
   "volume-off.svg",
   "volume-on.svg",
   "warning-circle-filled.svg",
+  "warning-circle-outline.svg",
   "warning-triangle-filled.svg",
   "warning-triangle-outline.svg",
   "web3.svg",
