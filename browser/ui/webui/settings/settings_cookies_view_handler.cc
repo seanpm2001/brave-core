@@ -95,22 +95,6 @@ void CookiesViewHandler::RegisterMessages() {
                           base::Unretained(this)));
 }
 
-void CookiesViewHandler::TreeNodesAdded(ui::TreeModel* model,
-                                        ui::TreeModelNode* parent,
-                                        size_t start,
-                                        size_t count) {}
-
-void CookiesViewHandler::TreeNodesRemoved(ui::TreeModel* model,
-                                          ui::TreeModelNode* parent,
-                                          size_t start,
-                                          size_t count) {
-  // Skip if there is a batch update in progress.
-  if (batch_update_) {
-    return;
-  }
-  FireWebUIListener("on-tree-item-removed");
-}
-
 void CookiesViewHandler::TreeModelBeginBatchDeprecated(
     CookiesTreeModel* model) {
   DCHECK(!batch_update_);  // There should be no nested batch begin.
