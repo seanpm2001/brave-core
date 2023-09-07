@@ -277,15 +277,7 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
      */
     void setBottomToolbarVisible(boolean isVisible) {
         if (mTabSwitcherModeCoordinator != null) {
-            try {
-                ChromeActivity activity = BraveActivity.getBraveActivity();
-                mTabSwitcherModeCoordinator.showToolbarOnTop(
-                        !isVisible, TabUiFeatureUtilities.isGridTabSwitcherEnabled(activity));
-            } catch (BraveActivity.BraveActivityNotFoundException e) {
-                Log.e(TAG, "setBottomToolbarVisible " + e);
-                mTabSwitcherModeCoordinator.showToolbarOnTop(
-                        !isVisible, TabUiFeatureUtilities.isGridTabSwitcherEnabled(mContext));
-            }
+            mTabSwitcherModeCoordinator.showToolbarOnTop(!isVisible, true);
         }
         mBrowsingModeCoordinator.onVisibilityChanged(isVisible);
     }
