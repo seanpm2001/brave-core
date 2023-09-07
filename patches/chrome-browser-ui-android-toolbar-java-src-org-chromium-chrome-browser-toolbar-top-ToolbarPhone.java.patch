@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarPhone.java b/chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarPhone.java
-index a8da4613ffecb0084870a6399a265de2ec7323ac..2563251f0b56941deb65d811ece74d75bdf49284 100644
+index 9c67e274455069405498a3c072853d380e1fce10..98ab5c8101d0f839d1acead3efa9c444d8ecd8fc 100644
 --- a/chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarPhone.java
 +++ b/chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarPhone.java
-@@ -397,6 +397,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
+@@ -400,6 +400,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
          if (mOptionalButtonCoordinator != null) {
              mOptionalButtonCoordinator.setBackgroundColorFilter(color);
          }
@@ -10,7 +10,7 @@ index a8da4613ffecb0084870a6399a265de2ec7323ac..2563251f0b56941deb65d811ece74d75
      }
  
      private void updateModernLocationBarCorners() {
-@@ -568,6 +569,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
+@@ -569,6 +570,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
                          EventConstants.PARTNER_HOME_PAGE_BUTTON_PRESSED);
              }
          }
@@ -18,7 +18,7 @@ index a8da4613ffecb0084870a6399a265de2ec7323ac..2563251f0b56941deb65d811ece74d75
      }
  
      @Override
-@@ -1019,6 +1021,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
+@@ -1020,6 +1022,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
       * New Tab Page.
       */
      private void updateLocationBarLayoutForExpansionAnimation() {
@@ -34,7 +34,7 @@ index a8da4613ffecb0084870a6399a265de2ec7323ac..2563251f0b56941deb65d811ece74d75
          // Draw the tab stack button and associated text if necessary.
          if (mTabSwitcherAnimationTabStackDrawable != null && mToggleTabStackButton != null
                  && mUrlExpansionFraction != 1f) {
-@@ -2111,6 +2115,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
+@@ -2119,6 +2123,7 @@ public class ToolbarPhone extends ToolbarLayout implements OnClickListener, TabC
          } else {
              populateUrlClearExpansionAnimatorSet(animators);
          }

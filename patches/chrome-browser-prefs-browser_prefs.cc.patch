@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
-index 0f55529411dbcd020cdabd13d2917955b622b7fa..dd43095f0a5bc9b105cda9e31b7fa2b96e1a4dcf 100644
+index 857795298164d4aec33c4a0c145f134bd0a18c84..16eaa75e752a437591d0569bb95d842714cd4939 100644
 --- a/chrome/browser/prefs/browser_prefs.cc
 +++ b/chrome/browser/prefs/browser_prefs.cc
-@@ -1626,6 +1626,8 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
+@@ -1513,6 +1513,8 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
    DeviceOAuth2TokenStoreDesktop::RegisterPrefs(registry);
  #endif
  
@@ -11,7 +11,7 @@ index 0f55529411dbcd020cdabd13d2917955b622b7fa..dd43095f0a5bc9b105cda9e31b7fa2b9
  #if BUILDFLAG(ENABLE_SCREEN_AI_SERVICE)
    screen_ai::RegisterLocalStatePrefs(registry);
  #endif  // BUILDFLAG(ENABLE_SCREEN_AI_SERVICE)
-@@ -2037,6 +2039,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+@@ -1926,6 +1928,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
  #endif
  
    registry->RegisterBooleanPref(prefs::kBlockTruncatedCookies, true);
