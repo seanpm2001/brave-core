@@ -233,16 +233,13 @@ public class BraveToolbarManager extends ToolbarManager {
                     (ViewStub) mActivity.findViewById(R.id.bottom_controls_stub);
             mBottomControls =
                     (BraveScrollingBottomViewResourceFrameLayout) bottomControlsStub.inflate();
-            if (TabUiFeatureUtilities.isTabGroupsAndroidEnabled(mActivity)) {
-                mTabGroupUi = TabManagementDelegateProvider.getDelegate().createTabGroupUi(
-                        mActivity, mBottomControls.findViewById(R.id.bottom_container_slot),
-                        mBrowserControlsSizer, mIncognitoStateProvider, mScrimCoordinator,
-                        mOmniboxFocusStateSupplier, mBottomSheetController,
-                        mActivityLifecycleDispatcher, mIsWarmOnResumeSupplier, mTabModelSelector,
-                        mTabContentManager, mCompositorViewHolder,
-                        mCompositorViewHolder::getDynamicResourceLoader, mTabCreatorManager,
-                        mLayoutStateProviderSupplier, mSnackbarManager);
-            }
+            mTabGroupUi = TabManagementDelegateProvider.getDelegate().createTabGroupUi(mActivity,
+                    mBottomControls.findViewById(R.id.bottom_container_slot), mBrowserControlsSizer,
+                    mIncognitoStateProvider, mScrimCoordinator, mOmniboxFocusStateSupplier,
+                    mBottomSheetController, mActivityLifecycleDispatcher, mIsWarmOnResumeSupplier,
+                    mTabModelSelector, mTabContentManager, mCompositorViewHolder,
+                    mCompositorViewHolder::getDynamicResourceLoader, mTabCreatorManager,
+                    mLayoutStateProviderSupplier, mSnackbarManager);
             mBottomControlsCoordinatorSupplier.set(new BraveBottomControlsCoordinator(
                     mLayoutStateProviderSupplier,
                     BottomTabSwitcherActionMenuCoordinator.createOnLongClickListener(
