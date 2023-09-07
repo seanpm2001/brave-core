@@ -261,7 +261,7 @@ def main():
     if basename == 'brave_strings' or basename == 'components_brave_strings':
         for pak_filename in xml_tree.xpath(
                 "//output[re:test(@filename, '.*\.(pak|xml)')]",
-                namespaces={"re": "http://exslt.org/regular-expressions"}):
+                namespaces={"re": "https://exslt.org/regular-expressions"}):
             pak_filename.attrib['filename'] = pak_filename.attrib[
                 'filename'].replace('chromium_strings', 'brave_strings')
 
