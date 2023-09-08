@@ -18,19 +18,18 @@
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/render_process_host.h"
-#include "content/public/browser/render_view_host.h"
 #include "content/public/browser/weak_document_ptr.h"
 #include "extensions/browser/extension_registry.h"
 #include "extensions/common/constants.h"
-#include "extensions/common/extension_set.h"
 
 namespace webtorrent {
 
+constexpr char kWebTorrentScheme[] = "webtorrent:";
+
 static GURL TranslateMagnetURL(const GURL& url) {
-  GURL extension_page_url(
-      base::StrCat({extensions::kExtensionScheme, "://",
-        brave_webtorrent_extension_id,
-        "/extension/brave_webtorrent.html?%s"}));
+  GURL extension_page_url(base::StrCat(
+      {extensions::kExtensionScheme, "://", brave_webtorrent_extension_id,
+       "/extension/brave_webtorrent.html?%s"}));
   std::string translatedSpec(extension_page_url.spec());
   base::ReplaceFirstSubstringAfterOffset(
       &translatedSpec, 0, "%s", base::EscapeQueryParamValue(url.spec(), true));
@@ -38,22 +37,24 @@ static GURL TranslateMagnetURL(const GURL& url) {
 }
 
 static GURL TranslateTorrentUIURLReversed(const GURL& url) {
-  GURL translatedURL(base::UnescapeURLComponent(
+  GURL translated_url(base::UnescapeURLComponent(
       url.query(),
       base::UnescapeRule::URL_SPECIAL_CHARS_EXCEPT_PATH_SEPARATORS |
           base::UnescapeRule::PATH_SEPARATORS));
   GURL::Replacements replacements;
   replacements.SetRefStr(url.ref_piece());
-  return translatedURL.ReplaceComponents(replacements);
+  return GURL(kWebTorrentScheme +
+              translated_url.ReplaceComponents(replacements).spec());
 }
 
-static bool HandleTorrentURLReverseRewrite(GURL* url,
+static bool HandleTorrentURLReverseRewrite(
+    GURL* url,
     content::BrowserContext* browser_context) {
   if (url->SchemeIs(extensions::kExtensionScheme) &&
       url->host() == brave_webtorrent_extension_id &&
       url->ExtractFileName() == "brave_webtorrent.html" &&
       GURL(url->query()).SchemeIsHTTPOrHTTPS()) {
-    *url =  TranslateTorrentUIURLReversed(*url);
+    *url = TranslateTorrentUIURLReversed(*url);
     return true;
   }
 
@@ -61,8 +62,10 @@ static bool HandleTorrentURLReverseRewrite(GURL* url,
 }
 
 static bool HandleTorrentURLRewrite(GURL* url,
-    content::BrowserContext* browser_context) {
-  if (!IsWebtorrentEnabled(browser_context)) return false;
+                                    content::BrowserContext* browser_context) {
+  if (!IsWebtorrentEnabled(browser_context)) {
+    return false;
+  }
 
   // The HTTP/HTTPS URL could be modified later by the network delegate if the
   // mime type matches or .torrent is in the path.
@@ -89,12 +92,13 @@ static void LoadOrLaunchMagnetURL(
     const absl::optional<url::Origin>& initiating_origin,
     content::WeakDocumentPtr initiator_document) {
   content::WebContents* web_contents = web_contents_getter.Run();
-  if (!web_contents)
+  if (!web_contents) {
     return;
+  }
 
   if (IsWebtorrentEnabled(web_contents->GetBrowserContext())) {
     web_contents->GetController().LoadURL(url, content::Referrer(),
-        page_transition, std::string());
+                                          page_transition, std::string());
   } else {
     ExternalProtocolHandler::LaunchUrl(
         url, web_contents_getter, page_transition, has_user_gesture,
@@ -104,7 +108,7 @@ static void LoadOrLaunchMagnetURL(
 }
 
 static bool HandleMagnetURLRewrite(GURL* url,
-    content::BrowserContext* browser_context) {
+                                   content::BrowserContext* browser_context) {
   if (IsWebtorrentEnabled(browser_context) && url->SchemeIs(kMagnetScheme)) {
     *url = TranslateMagnetURL(*url);
     return true;
