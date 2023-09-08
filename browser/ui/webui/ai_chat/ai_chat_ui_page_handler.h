@@ -17,14 +17,11 @@
 #include "base/task/cancelable_task_tracker.h"
 #include "brave/components/ai_chat/browser/ai_chat_tab_helper.h"
 #include "brave/components/ai_chat/common/mojom/ai_chat.mojom.h"
-#include "chrome/browser/ui/tabs/tab_strip_model_observer.h"
 #include "content/public/browser/web_contents_observer.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"
 #include "mojo/public/cpp/bindings/receiver.h"
 #include "mojo/public/cpp/bindings/remote.h"
-
-class TabStripModel;
 
 namespace content {
 class WebContents;
@@ -34,15 +31,15 @@ namespace favicon {
 class FaviconService;
 }  // namespace favicon
 
+class Profile;
+
 namespace ai_chat {
 class AIChatUIPageHandler : public ai_chat::mojom::PageHandler,
-                            public TabStripModelObserver,
                             public AIChatTabHelper::Observer,
                             public content::WebContentsObserver {
  public:
   AIChatUIPageHandler(
       content::WebContents* owner_web_contents,
-      TabStripModel* tab_strip_model,
       Profile* profile,
       mojo::PendingReceiver<ai_chat::mojom::PageHandler> receiver);
 
@@ -71,6 +68,15 @@ class AIChatUIPageHandler : public ai_chat::mojom::PageHandler,
   // content::WebContentsObserver:
   void OnVisibilityChanged(content::Visibility visibility) override;
 
+ protected:
+  void InitAIChatUIPageHandler(bool is_standalone,
+                               content::WebContents* web_contents);
+
+  mojo::Remote<ai_chat::mojom::ChatUIPage> page_;
+  raw_ptr<AIChatTabHelper> active_chat_tab_helper_ = nullptr;
+  base::ScopedObservation<AIChatTabHelper, AIChatTabHelper::Observer>
+      chat_tab_helper_observation_{this};
+
  private:
   // ChatTabHelper::Observer
   void OnHistoryUpdate() override;
@@ -83,25 +89,13 @@ class AIChatUIPageHandler : public ai_chat::mojom::PageHandler,
   void OnFaviconImageDataChanged() override;
   void OnPageHasContent() override;
 
-  // TabStripModelObserver
-  void OnTabStripModelChanged(
-      TabStripModel* tab_strip_model,
-      const TabStripModelChange& change,
-      const TabStripSelectionChange& selection) override;
-
   void GetFaviconImageData(GetFaviconImageDataCallback callback) override;
   absl::optional<mojom::SiteInfo> BuildSiteInfo();
 
-  mojo::Remote<ai_chat::mojom::ChatUIPage> page_;
-
-  raw_ptr<AIChatTabHelper> active_chat_tab_helper_ = nullptr;
   raw_ptr<favicon::FaviconService> favicon_service_ = nullptr;
   raw_ptr<Profile> profile_ = nullptr;
 
   base::CancelableTaskTracker favicon_task_tracker_;
-
-  base::ScopedObservation<AIChatTabHelper, AIChatTabHelper::Observer>
-      chat_tab_helper_observation_{this};
 
   mojo::Receiver<ai_chat::mojom::PageHandler> receiver_;
 

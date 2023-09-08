@@ -71,7 +71,21 @@ source_set("ui") {
     sources += [
       "webui/ai_chat/ai_chat_ui.cc",
       "webui/ai_chat/ai_chat_ui.h",
+      "webui/ai_chat/ai_chat_ui_page_handler.cc",
+      "webui/ai_chat/ai_chat_ui_page_handler.h",
     ]
+
+    if (!is_android) {
+      sources += [
+        "webui/ai_chat/ai_chat_ui_page_handler_impl.cc",
+        "webui/ai_chat/ai_chat_ui_page_handler_impl.h",
+      ]
+    } else {
+      sources += [
+        "webui/ai_chat/ai_chat_ui_page_handler_impl_android.cc",
+        "webui/ai_chat/ai_chat_ui_page_handler_impl_android.h",
+      ]
+    }
   }
 
   if (!is_android) {
@@ -214,8 +228,6 @@ source_set("ui") {
 
     if (enable_ai_chat) {
       sources += [
-        "webui/ai_chat/ai_chat_ui_page_handler.cc",
-        "webui/ai_chat/ai_chat_ui_page_handler.h",
         "webui/settings/brave_settings_leo_assistant_handler.cc",
         "webui/settings/brave_settings_leo_assistant_handler.h",
       ]

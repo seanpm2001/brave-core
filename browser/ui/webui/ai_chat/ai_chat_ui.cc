@@ -23,8 +23,10 @@
 #include "content/public/common/url_constants.h"
 
 #if !BUILDFLAG(IS_ANDROID)
-#include "brave/browser/ui/webui/ai_chat/ai_chat_ui_page_handler.h"
+#include "brave/browser/ui/webui/ai_chat/ai_chat_ui_page_handler_impl.h"
 #include "chrome/browser/ui/browser.h"
+#else
+#include "brave/browser/ui/webui/ai_chat/ai_chat_ui_page_handler_impl_android.h"
 #endif
 
 AIChatUI::AIChatUI(content::WebUI* web_ui)
@@ -82,10 +84,14 @@ void AIChatUI::BindInterface(
 #if !BUILDFLAG(IS_ANDROID)
   browser_ = ai_chat::GetBrowserForWebContents(web_ui()->GetWebContents());
   DCHECK(browser_);
-  page_handler_ = std::make_unique<ai_chat::AIChatUIPageHandler>(
-      web_ui()->GetWebContents(), browser_->tab_strip_model(), profile_,
-      std::move(receiver));
 #endif
+
+  page_handler_ = std::make_unique<ai_chat::AIChatUIPageHandlerImpl>(
+      web_ui()->GetWebContents(),
+#if !BUILDFLAG(IS_ANDROID)
+      browser_->tab_strip_model(),
+#endif
+      profile_, std::move(receiver));
 }
 
 std::unique_ptr<content::WebUIController>

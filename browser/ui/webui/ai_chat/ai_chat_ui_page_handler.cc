@@ -16,7 +16,6 @@
 #include "brave/components/ai_chat/common/pref_names.h"
 #include "chrome/browser/favicon/favicon_service_factory.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/browser/ui/tabs/tab_strip_model.h"
 #include "components/favicon/core/favicon_service.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/visibility.h"
@@ -35,20 +34,18 @@ using mojom::ConversationTurnVisibility;
 
 AIChatUIPageHandler::AIChatUIPageHandler(
     content::WebContents* owner_web_contents,
-    TabStripModel* tab_strip_model,
     Profile* profile,
     mojo::PendingReceiver<ai_chat::mojom::PageHandler> receiver)
     : content::WebContentsObserver(owner_web_contents),
       profile_(profile),
-      receiver_(this, std::move(receiver)) {
-  DCHECK(tab_strip_model);
-  // Detect if we are in target-tab mode, or standalone mode. Standalone mode
-  // means Chat is opened as its own tab in the tab strip and not a side panel.
-  bool is_standalone = (tab_strip_model->GetIndexOfWebContents(
-                            owner_web_contents) != TabStripModel::kNoTab);
+      receiver_(this, std::move(receiver)) {}
+
+AIChatUIPageHandler::~AIChatUIPageHandler() = default;
+
+void AIChatUIPageHandler::InitAIChatUIPageHandler(
+    bool is_standalone,
+    content::WebContents* web_contents) {
   if (!is_standalone) {
-    tab_strip_model->AddObserver(this);
-    auto* web_contents = tab_strip_model->GetActiveWebContents();
     if (!web_contents) {
       return;
     }
@@ -70,8 +67,6 @@ AIChatUIPageHandler::AIChatUIPageHandler(
   favicon_service_ = FaviconServiceFactory::GetForProfile(
       profile_, ServiceAccessType::EXPLICIT_ACCESS);
 }
-
-AIChatUIPageHandler::~AIChatUIPageHandler() = default;
 
 void AIChatUIPageHandler::SetClientPage(
     mojo::PendingRemote<ai_chat::mojom::ChatUIPage> page) {
@@ -246,31 +241,6 @@ void AIChatUIPageHandler::OnPageHasContent() {
 
     page_->OnSiteInfoChanged(site_info.has_value() ? site_info.value().Clone()
                                                    : nullptr);
-  }
-}
-
-void AIChatUIPageHandler::OnTabStripModelChanged(
-    TabStripModel* tab_strip_model,
-    const TabStripModelChange& change,
-    const TabStripSelectionChange& selection) {
-  if (selection.active_tab_changed()) {
-    if (active_chat_tab_helper_) {
-      active_chat_tab_helper_ = nullptr;
-      chat_tab_helper_observation_.Reset();
-    }
-
-    if (selection.new_contents) {
-      active_chat_tab_helper_ =
-          AIChatTabHelper::FromWebContents(selection.new_contents);
-      // Let the tab helper know if the UI is visible
-      active_chat_tab_helper_->OnConversationActiveChanged(
-          (web_contents()->GetVisibility() == content::Visibility::VISIBLE)
-              ? true
-              : false);
-      chat_tab_helper_observation_.Observe(active_chat_tab_helper_);
-    }
-    // Reset state
-    page_->OnTargetTabChanged();
   }
 }
 

@@ -16,8 +16,11 @@
 #include "ui/webui/mojo_web_ui_controller.h"
 #include "ui/webui/untrusted_web_ui_controller.h"
 
-class Browser;
 class Profile;
+
+#if !BUILDFLAG(IS_ANDROID)
+class Browser;
+#endif
 
 class AIChatUI : public ui::UntrustedWebUIController {
  public:
@@ -41,7 +44,10 @@ class AIChatUI : public ui::UntrustedWebUIController {
 
   base::WeakPtr<ui::MojoBubbleWebUIController::Embedder> embedder_;
   raw_ptr<Profile> profile_ = nullptr;
+
+#if !BUILDFLAG(IS_ANDROID)
   raw_ptr<Browser> browser_ = nullptr;
+#endif
 
   WEB_UI_CONTROLLER_TYPE_DECL();
 };
