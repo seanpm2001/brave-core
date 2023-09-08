@@ -124,6 +124,7 @@
 -All/PrerenderingChangePasswordNavigationThrottleBrowserTest.*
 -All/PrerenderNewTabPageBrowserTest.NewTabPagePrerenderNonHttps/*
 -All/PrerenderNewTabPageBrowserTest.PrerenderTriggeredByNewTabPageAndActivate/*
+-All/PrerenderNewTabPageBrowserTest.PrerenderTriggeredCanceled/*
 -All/PrerenderOmniboxSearchSuggestionReloadBrowserTest.*
 -All/SafeBrowsingBlockingPageDelayedWarningPrerenderingBrowserTest.*
 -All/SafeBrowsingPrerenderBrowserTest.*
@@ -284,6 +285,8 @@
 -IsolatedWebAppBrowsingDataClearingTest.ClearBrowserDataAllTime
 -IsolatedWebAppBrowsingDataClearingTest.ClearBrowserDataTimeRanged
 -IsolatedWebAppBrowsingDataClearingTest.CookieCleared
+-IsolatedWebAppBrowsingDataClearingTest.ControlledFrameClearSiteDataHeader
+-IsolatedWebAppBrowsingDataClearingTest.CrossOriginIframeClearSiteDataHeader
 -IsolatedWebAppBrowsingDataClearingTest.DataClearedOnUninstall
 -IsolatedWebAppBrowsingDataClearingTest.LocalStorageCleared
 -IsolatedWebAppDevToolsTest.ErrorPage
@@ -401,7 +404,7 @@
 # is coming from Brave extension?
 -PrivacyBudgetBrowserTestWithTestRecorderParameterized/PrivacyBudgetBrowserTestWithTestRecorder.RecordingFeaturesCalledInWorker/*
 
-# This test times out because we Disable "Use a prediction service to load
+# These tests time out because we Disable "Use a prediction service to load
 # pages more quickly" (via prefetch::prefs::kNetworkPredictionOptions pref).
 -All/LoadingPredictorNetworkIsolationKeyBrowserTest.*
 -All/PredictionManagerBrowserTest.*
@@ -877,7 +880,8 @@
 -WebHidExtensionBrowserTest.DeviceConnectAndOpenDeviceWhenServiceWorkerStopped
 -WebHidExtensionBrowserTest.HidConnectionTracker
 -WebHidExtensionFeatureEnabledBrowserTest.HidConnectionTracker
--WebUsbExtensionFeatureEnabledBrowserTest.UsbConnectionTracker
+-WebUsbExtensionBrowserTest.DeviceConnectAndOpenDeviceWhenServiceWorkerStopped
+-WebUsbExtensionBrowserTest.UsbConnectionTracker
 
 # These tests fail because we disable field trials via
 # disable_fieldtrial_testing_config
@@ -1172,6 +1176,7 @@
 -DevToolsNetInfoTest.*
 -DevToolsPolicyTest.*
 -DevToolsProtocolTest.*
+-DevToolsProtocolTest_PrefetchHoldbackDisabledIfCDPClientConnected.*
 -DevToolsSyncTest.*
 -DevToolsTagTest.*
 -DevToolsTest.NewWindowFromBrowserContext
