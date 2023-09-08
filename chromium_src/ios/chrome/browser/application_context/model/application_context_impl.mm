@@ -174,8 +174,9 @@ void ApplicationContextImpl::OnAppEnterBackground() {
     }
 
     PrefService* browser_state_prefs = browser_state->GetPrefs();
-    if (browser_state_prefs)
+    if (browser_state_prefs) {
       browser_state_prefs->CommitPendingWrite();
+    }
   }
 }
 
@@ -187,8 +188,9 @@ bool ApplicationContextImpl::WasLastShutdownClean() {
 
 PrefService* ApplicationContextImpl::GetLocalState() {
   DCHECK(thread_checker_.CalledOnValidThread());
-  if (!local_state_)
+  if (!local_state_) {
     CreateLocalState();
+  }
   return local_state_.get();
 }
 
@@ -223,8 +225,9 @@ const std::string& ApplicationContextImpl::GetApplicationCountry() {
 ios::ChromeBrowserStateManager*
 ApplicationContextImpl::GetChromeBrowserStateManager() {
   DCHECK(thread_checker_.CalledOnValidThread());
-  if (!chrome_browser_state_manager_)
+  if (!chrome_browser_state_manager_) {
     chrome_browser_state_manager_.reset(new ChromeBrowserStateManagerImpl());
+  }
   return chrome_browser_state_manager_.get();
 }
 
