@@ -16,7 +16,7 @@
 #include "brave/components/brave_ads/core/internal/serving/eligible_ads/pipelines/inline_content_ads/eligible_inline_content_ads_factory.h"
 #include "brave/components/brave_ads/core/internal/serving/inline_content_ad_serving_feature.h"
 #include "brave/components/brave_ads/core/internal/serving/permission_rules/inline_content_ads/inline_content_ad_permission_rules.h"
-#include "brave/components/brave_ads/core/internal/serving/targeting/top_segments.h"
+#include "brave/components/brave_ads/core/internal/serving/targeting/top_segments_util.h"
 #include "brave/components/brave_ads/core/internal/serving/targeting/user_model_builder.h"
 #include "brave/components/brave_ads/core/internal/serving/targeting/user_model_info.h"
 #include "brave/components/brave_ads/core/internal/targeting/behavioral/anti_targeting/resource/anti_targeting_resource.h"
@@ -67,25 +67,21 @@ void InlineContentAdServing::BuildUserModelCallback(
     const std::string& dimensions,
     MaybeServeInlineContentAdCallback callback,
     const UserModelInfo& user_model) {
+  NotifyOpportunityAroseToServeInlineContentAd(
+      GetTopSegments(user_model, /*max_count*/ 1, /*parent_only*/ false));
+
   CHECK(eligible_ads_);
   eligible_ads_->GetForUserModel(
       user_model, dimensions,
       base::BindOnce(&InlineContentAdServing::GetForUserModelCallback,
-                     weak_factory_.GetWeakPtr(), user_model, dimensions,
+                     weak_factory_.GetWeakPtr(), dimensions,
                      std::move(callback)));
 }
 
 void InlineContentAdServing::GetForUserModelCallback(
-    const UserModelInfo& user_model,
     const std::string& dimensions,
     MaybeServeInlineContentAdCallback callback,
-    const bool had_opportunity,
     const CreativeInlineContentAdList& creative_ads) {
-  if (had_opportunity) {
-    NotifyOpportunityAroseToServeInlineContentAd(
-        GetTopChildSegments(user_model));
-  }
-
   if (creative_ads.empty()) {
     BLOG(1, "Inline content ad not served: No eligible ads found");
     return FailedToServeAd(dimensions, std::move(callback));

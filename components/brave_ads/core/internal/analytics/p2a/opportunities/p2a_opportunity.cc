@@ -6,13 +6,15 @@
 #include "brave/components/brave_ads/core/internal/analytics/p2a/opportunities/p2a_opportunity.h"
 
 #include "brave/components/brave_ads/core/internal/analytics/p2a/opportunities/p2a_opportunity_util.h"
-#include "brave/components/brave_ads/core/internal/analytics/p2a/p2a.h"
+#include "brave/components/brave_ads/core/internal/client/ads_client_helper.h"
+#include "brave/components/brave_ads/core/public/units/ad_type.h"
 
-namespace brave_ads::p2a {
+namespace brave_ads {
 
-void RecordAdOpportunity(const AdType& /*ad_type*/,
-                         const SegmentList& segments) {
-  RecordEvent(BuildAdOpportunityEvents(segments));
+void RecordP2AAdOpportunity(const AdType& ad_type,
+                            const SegmentList& segments) {
+  AdsClientHelper::GetInstance()->RecordP2AEvents(
+      BuildP2AAdOpportunityEvents(ad_type, segments));
 }
 
-}  // namespace brave_ads::p2a
+}  // namespace brave_ads

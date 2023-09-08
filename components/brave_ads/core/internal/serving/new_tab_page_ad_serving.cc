@@ -16,7 +16,7 @@
 #include "brave/components/brave_ads/core/internal/serving/eligible_ads/pipelines/new_tab_page_ads/eligible_new_tab_page_ads_factory.h"
 #include "brave/components/brave_ads/core/internal/serving/new_tab_page_ad_serving_feature.h"
 #include "brave/components/brave_ads/core/internal/serving/permission_rules/new_tab_page_ads/new_tab_page_ad_permission_rules.h"
-#include "brave/components/brave_ads/core/internal/serving/targeting/top_segments.h"
+#include "brave/components/brave_ads/core/internal/serving/targeting/top_segments_util.h"
 #include "brave/components/brave_ads/core/internal/serving/targeting/user_model_builder.h"
 #include "brave/components/brave_ads/core/internal/serving/targeting/user_model_info.h"
 #include "brave/components/brave_ads/core/internal/targeting/behavioral/anti_targeting/resource/anti_targeting_resource.h"
@@ -64,22 +64,19 @@ void NewTabPageAdServing::MaybeServeAd(
 void NewTabPageAdServing::BuildUserModelCallback(
     MaybeServeNewTabPageAdCallback callback,
     const UserModelInfo& user_model) {
+  NotifyOpportunityAroseToServeNewTabPageAd(
+      GetTopSegments(user_model, /*max_count*/ 1, /*parent_only*/ false));
+
   CHECK(eligible_ads_);
   eligible_ads_->GetForUserModel(
-      user_model, base::BindOnce(&NewTabPageAdServing::GetForUserModelCallback,
-                                 weak_factory_.GetWeakPtr(),
-                                 std::move(callback), user_model));
+      user_model,
+      base::BindOnce(&NewTabPageAdServing::GetForUserModelCallback,
+                     weak_factory_.GetWeakPtr(), std::move(callback)));
 }
 
 void NewTabPageAdServing::GetForUserModelCallback(
     MaybeServeNewTabPageAdCallback callback,
-    const UserModelInfo& user_model,
-    const bool had_opportunity,
     const CreativeNewTabPageAdList& creative_ads) {
-  if (had_opportunity) {
-    NotifyOpportunityAroseToServeNewTabPageAd(GetTopChildSegments(user_model));
-  }
-
   if (creative_ads.empty()) {
     BLOG(1, "New tab page ad not served: No eligible ads found");
     return FailedToServeAd(std::move(callback));

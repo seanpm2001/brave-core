@@ -58,9 +58,7 @@ class NotificationAdServing final : public AdsClientNotifierObserver {
   bool IsSupported() const { return bool{eligible_ads_}; }
 
   void BuildUserModelCallback(const UserModelInfo& user_model);
-  void GetForUserModelCallback(const UserModelInfo& user_model,
-                               bool had_opportunity,
-                               const CreativeNotificationAdList& creative_ads);
+  void GetForUserModelCallback(const CreativeNotificationAdList& creative_ads);
 
   void UpdateMaximumAdsPerHour();
 

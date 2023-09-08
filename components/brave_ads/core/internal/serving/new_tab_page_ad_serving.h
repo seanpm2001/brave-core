@@ -49,8 +49,6 @@ class NewTabPageAdServing final {
   void BuildUserModelCallback(MaybeServeNewTabPageAdCallback callback,
                               const UserModelInfo& user_model);
   void GetForUserModelCallback(MaybeServeNewTabPageAdCallback callback,
-                               const UserModelInfo& user_model,
-                               bool had_opportunity,
                                const CreativeNewTabPageAdList& creative_ads);
 
   void ServeAd(const NewTabPageAdInfo& ad,

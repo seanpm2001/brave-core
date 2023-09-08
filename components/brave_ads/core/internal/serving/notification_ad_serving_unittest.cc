@@ -101,7 +101,7 @@ TEST_F(BraveAdsNotificationAdServingTest, DoNotServeAdIfNoEligibleAdsFound) {
   serving_->MaybeServeAd();
 
   // Assert
-  EXPECT_FALSE(opportunity_arose_to_serve_ad_);
+  EXPECT_TRUE(opportunity_arose_to_serve_ad_);
   EXPECT_FALSE(did_serve_ad_);
   EXPECT_TRUE(failed_to_serve_ad_);
 }

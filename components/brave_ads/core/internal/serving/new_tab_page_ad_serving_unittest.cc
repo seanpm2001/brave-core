@@ -130,7 +130,7 @@ TEST_F(BraveAdsNewTabPageAdServingTest, DoNotServeAdIfMissingWallpapers) {
          const absl::optional<NewTabPageAdInfo>& ad) {
         // Assert
         EXPECT_FALSE(ad);
-        EXPECT_FALSE(serving_delegate->opportunity_arose_to_serve_ad());
+        EXPECT_TRUE(serving_delegate->opportunity_arose_to_serve_ad());
         EXPECT_FALSE(serving_delegate->did_serve_ad());
         EXPECT_TRUE(serving_delegate->failed_to_serve_ad());
       },
@@ -147,7 +147,7 @@ TEST_F(BraveAdsNewTabPageAdServingTest, DoNotServeAdIfNoEligibleAdsFound) {
          const absl::optional<NewTabPageAdInfo>& ad) {
         // Assert
         EXPECT_FALSE(ad);
-        EXPECT_FALSE(serving_delegate->opportunity_arose_to_serve_ad());
+        EXPECT_TRUE(serving_delegate->opportunity_arose_to_serve_ad());
         EXPECT_FALSE(serving_delegate->did_serve_ad());
         EXPECT_TRUE(serving_delegate->failed_to_serve_ad());
       },

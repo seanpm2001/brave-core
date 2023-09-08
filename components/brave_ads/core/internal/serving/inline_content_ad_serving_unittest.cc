@@ -140,7 +140,7 @@ TEST_F(BraveAdsInlineContentAdServingTest,
              const absl::optional<InlineContentAdInfo>& ad) {
             // Assert
             EXPECT_FALSE(ad);
-            EXPECT_FALSE(serving_delegate->opportunity_arose_to_serve_ad());
+            EXPECT_TRUE(serving_delegate->opportunity_arose_to_serve_ad());
             EXPECT_FALSE(serving_delegate->did_serve_ad());
             EXPECT_TRUE(serving_delegate->failed_to_serve_ad());
           },

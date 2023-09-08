@@ -18,7 +18,7 @@
 #include "brave/components/brave_ads/core/internal/serving/notification_ad_serving_feature.h"
 #include "brave/components/brave_ads/core/internal/serving/notification_ad_serving_util.h"
 #include "brave/components/brave_ads/core/internal/serving/permission_rules/notification_ads/notification_ad_permission_rules.h"
-#include "brave/components/brave_ads/core/internal/serving/targeting/top_segments.h"
+#include "brave/components/brave_ads/core/internal/serving/targeting/top_segments_util.h"
 #include "brave/components/brave_ads/core/internal/serving/targeting/user_model_builder.h"
 #include "brave/components/brave_ads/core/internal/serving/targeting/user_model_info.h"
 #include "brave/components/brave_ads/core/internal/settings/settings.h"
@@ -99,22 +99,18 @@ void NotificationAdServing::MaybeServeAd() {
 
 void NotificationAdServing::BuildUserModelCallback(
     const UserModelInfo& user_model) {
+  NotifyOpportunityAroseToServeNotificationAd(
+      GetTopSegments(user_model, /*max_count*/ 1, /*parent_only*/ false));
+
   CHECK(eligible_ads_);
   eligible_ads_->GetForUserModel(
       user_model,
       base::BindOnce(&NotificationAdServing::GetForUserModelCallback,
-                     weak_factory_.GetWeakPtr(), user_model));
+                     weak_factory_.GetWeakPtr()));
 }
 
 void NotificationAdServing::GetForUserModelCallback(
-    const UserModelInfo& user_model,
-    const bool had_opportunity,
     const CreativeNotificationAdList& creative_ads) {
-  if (had_opportunity) {
-    NotifyOpportunityAroseToServeNotificationAd(
-        GetTopChildSegments(user_model));
-  }
-
   if (creative_ads.empty()) {
     BLOG(1, "Notification ad not served: No eligible ads found");
     return FailedToServeAd();
@@ -133,9 +129,7 @@ void NotificationAdServing::UpdateMaximumAdsPerHour() {
   BLOG(1, "Maximum notification ads per hour changed to "
               << GetMaximumNotificationAdsPerHour());
 
-  if (ShouldServeAdsAtRegularIntervals()) {
-    MaybeServeAdAtNextRegularInterval();
-  }
+  MaybeServeAdAtNextRegularInterval();
 }
 
 void NotificationAdServing::MaybeServeAdAtNextRegularInterval() {

@@ -21,6 +21,7 @@
 #include "brave/components/brave_ads/core/internal/account/user_data/fixed/segment_user_data.h"
 #include "brave/components/brave_ads/core/internal/account/user_data/fixed/studies_user_data.h"
 #include "brave/components/brave_ads/core/internal/account/user_data/fixed/version_number_user_data.h"
+#include "brave/components/brave_ads/core/internal/serving/targeting/user_model_builder.h"
 #include "brave/components/brave_ads/core/public/account/confirmations/confirmation_type.h"
 
 namespace brave_ads {
@@ -47,6 +48,9 @@ void BuildFixedUserDataCallback(const TransactionInfo& transaction,
 
 void BuildFixedUserData(const TransactionInfo& transaction,
                         BuildUserDataCallback callback) {
+  // TODO(tmancey): Build "top_segment" user data by calling |BuildUserModel|
+  // and discuss sending both "segment" and "top_segment" with privacy.
+
   if (transaction.confirmation_type != ConfirmationType::kConversion) {
     return BuildFixedUserDataCallback(transaction, std::move(callback),
                                       /*conversion_user_data*/ {});

@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/brave_ads/browser/analytics/p2a/ads_p2a.h"
+#include "brave/components/brave_ads/browser/analytics/p2a/p2a.h"
 
 #include <cstdint>
 
@@ -20,6 +20,7 @@ namespace brave_ads {
 
 namespace {
 
+// TODO(tmancey): Should we add support for intent and latent intent segments?
 constexpr const char* kAllowedEvents[] = {
     "Brave.P2A.TotalAdOpportunities",
     "Brave.P2A.AdOpportunitiesPerSegment.architecture",
@@ -54,11 +55,11 @@ constexpr const char* kAllowedEvents[] = {
 
 constexpr size_t kIntervalBuckets[] = {0, 5, 10, 20, 50, 100, 250, 500};
 
-void EmitP2AHistogramName(const std::string& name, uint16_t sum) {
+void EmitP2AHistogramName(const std::string& name, const uint64_t sum) {
   CHECK(base::Contains(kAllowedEvents, name));
 
   const size_t* const iter =
-      std::lower_bound(kIntervalBuckets, std::end(kIntervalBuckets), sum);
+      std::lower_bound(kIntervalBuckets, std::cend(kIntervalBuckets), sum);
   const size_t bucket = iter - kIntervalBuckets;
 
   base::UmaHistogramExactLinear(name, static_cast<int>(bucket),
@@ -68,6 +69,8 @@ void EmitP2AHistogramName(const std::string& name, uint16_t sum) {
 }  // namespace
 
 void RegisterP2APrefs(PrefRegistrySimple* registry) {
+  CHECK(registry);
+
   for (const char* const event : kAllowedEvents) {
     const std::string pref_path =
         base::StrCat({prefs::kP2AStoragePrefNamePrefix, event});
@@ -89,6 +92,7 @@ void RecordInWeeklyStorageAndEmitP2AHistogramName(PrefService* prefs,
     return;
   }
 
+  // TODO(tmancey): Should we consider storing in daily storage?
   WeeklyStorage storage(prefs, pref_path.c_str());
   storage.AddDelta(1);
 

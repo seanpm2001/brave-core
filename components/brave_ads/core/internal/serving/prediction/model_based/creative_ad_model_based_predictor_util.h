@@ -24,6 +24,8 @@ CreativeAdPredictorList<T> ComputeCreativeAdPredictors(
     const AdEventList& ad_events) {
   CreativeAdPredictorList<T> creative_ad_predictors;
 
+  // TODO(tmancey): Ad prediction leans heavily towards those ads with more
+  // segments, so we should group creative ad instances together.
   for (const auto& creative_ad : creative_ads) {
     CreativeAdPredictorInfo<T> creative_ad_predictor;
 

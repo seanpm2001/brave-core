@@ -58,8 +58,7 @@ void EligibleInlineContentAdsV1::GetForUserModelCallback(
     const AdEventList& ad_events) {
   if (!success) {
     BLOG(1, "Failed to get ad events");
-    return std::move(callback).Run(/*had_opportunity*/ false,
-                                   /*eligible_ads*/ {});
+    return std::move(callback).Run(/*eligible_ads*/ {});
   }
 
   GetBrowsingHistory(std::move(user_model), dimensions, ad_events,
@@ -127,8 +126,7 @@ void EligibleInlineContentAdsV1::GetForChildSegmentsCallback(
     const CreativeInlineContentAdList& creative_ads) {
   if (!success) {
     BLOG(1, "Failed to get ads for child segments");
-    return std::move(callback).Run(/*had_opportunity*/ false,
-                                   /*eligible_ads*/ {});
+    return std::move(callback).Run(/*eligible_ads*/ {});
   }
 
   const CreativeInlineContentAdList eligible_creative_ads =
@@ -144,7 +142,7 @@ void EligibleInlineContentAdsV1::GetForChildSegmentsCallback(
               << " eligible ads out of " << creative_ads.size()
               << " ads for child segments");
 
-  std::move(callback).Run(/*had_opportunity*/ true, eligible_creative_ads);
+  std::move(callback).Run(eligible_creative_ads);
 }
 
 void EligibleInlineContentAdsV1::GetForParentSegments(
@@ -182,8 +180,7 @@ void EligibleInlineContentAdsV1::GetForParentSegmentsCallback(
     const CreativeInlineContentAdList& creative_ads) {
   if (!success) {
     BLOG(1, "Failed to get ads for parent segments");
-    return std::move(callback).Run(/*had_opportunity*/ false,
-                                   /*eligible_ads*/ {});
+    return std::move(callback).Run(/*eligible_ads*/ {});
   }
 
   const CreativeInlineContentAdList eligible_creative_ads =
@@ -199,7 +196,7 @@ void EligibleInlineContentAdsV1::GetForParentSegmentsCallback(
               << " eligible ads out of " << creative_ads.size()
               << " ads for parent segments");
 
-  std::move(callback).Run(/*had_opportunity*/ true, eligible_creative_ads);
+  std::move(callback).Run(eligible_creative_ads);
 }
 
 void EligibleInlineContentAdsV1::GetForUntargeted(
@@ -226,8 +223,7 @@ void EligibleInlineContentAdsV1::GetForUntargetedCallback(
     const CreativeInlineContentAdList& creative_ads) {
   if (!success) {
     BLOG(1, "Failed to get ads for untargeted segment");
-    return std::move(callback).Run(/*had_opportunity*/ false,
-                                   /*eligible_ads*/ {});
+    return std::move(callback).Run(/*eligible_ads*/ {});
   }
 
   const CreativeInlineContentAdList eligible_creative_ads =
@@ -235,15 +231,14 @@ void EligibleInlineContentAdsV1::GetForUntargetedCallback(
   if (eligible_creative_ads.empty()) {
     BLOG(1, "No eligible ads out of " << creative_ads.size()
                                       << " ads for untargeted segment");
-    return std::move(callback).Run(/*had_opportunity*/ false,
-                                   /*eligible_ads*/ {});
+    return std::move(callback).Run(/*eligible_ads*/ {});
   }
 
   BLOG(1, eligible_creative_ads.size()
               << " eligible ads out of " << creative_ads.size()
               << " ads for untargeted segment");
 
-  std::move(callback).Run(/*had_opportunity*/ true, eligible_creative_ads);
+  std::move(callback).Run(eligible_creative_ads);
 }
 
 CreativeInlineContentAdList EligibleInlineContentAdsV1::FilterCreativeAds(
