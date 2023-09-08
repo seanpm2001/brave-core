@@ -36,6 +36,8 @@
 -BrowserFinderTest.ScheduledForDeletion
 -BrowserViewTestWithStopLoadingAnimationForHiddenWindow.LoadingAnimationNotRenderedWhenWindowHidden
 -ChromeBrowsingDataRemoverDelegateOriginTrialsTest.PersistentOriginTrialsAreDeleted
+-ChromeTailoredSecurityServiceRetryForSyncUsersDisabledTest.*
+-ChromeTailoredSecurityServiceTest.*
 -CookieControlsBubbleCoordinatorTest.ShowBubbleTest
 -CookieControlsBubbleViewImplTest.BubbleWidth
 -CookieControlsContentViewUnitTest.FeedbackSection
@@ -402,6 +404,10 @@
 # return false
 -SafetyHubHandlerTest.HandleGetSafeBrowsingState_EnabledEnhanced
 
+# This test times out because we Disable "Use a prediction service to load
+# pages more quickly" (via prefetch::prefs::kNetworkPredictionOptions pref)
+-NavigationPredictorUserInteractionsTest.ProcessPointerEventUsingMLModel
+
 # Tests below this point have not been diagnosed or had issues created yet.
 -AboutFlagsHistogramTest.*
 -AboutFlagsTest.*
@@ -504,7 +510,6 @@
 -ChromePingManagerTest.*
 -ChromeRuntimeAPIDelegateReloadTest.*
 -ChromeRuntimeAPIDelegateTest.*
--ChromeTailoredSecurityServiceTest.*
 -ChromeUsbDelegateTest.*
 -ChromeWebContentsMenuHelperUnitTest.*
 -ChromeWebContentsViewDelegateViewsTest.*
