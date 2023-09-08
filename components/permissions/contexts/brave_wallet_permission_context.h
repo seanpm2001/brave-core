@@ -18,8 +18,6 @@
 #include "third_party/blink/public/common/permissions/permission_utils.h"
 #include "url/origin.h"
 
-class GURL;
-
 namespace content {
 class BrowserContext;
 class WebContents;
